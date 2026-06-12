@@ -26,8 +26,8 @@ Powered by Nomba Virtual Accounts infrastructure.
 
 ## Project Structure
 
-```
-<!-- src/
+<!-- ```
+src/
   app/
     (auth)/login          → Login page
     (auth)/register       → Register + role selection
@@ -55,8 +55,8 @@ Powered by Nomba Virtual Accounts infrastructure.
     utils.ts              → formatNaira, relativeTime, cn, state configs
   schemas/index.ts        → All Zod validation schemas
   store/authStore.ts      → Zustand auth store
-  types/index.ts          → All TypeScript interfaces and enums -->
-```
+  types/index.ts          → All TypeScript interfaces and enums
+``` -->
 
 ---
 
