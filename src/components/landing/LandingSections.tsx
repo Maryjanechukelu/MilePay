@@ -7,6 +7,8 @@ import {
   Zap, Star, ChevronDown, Lock, TrendingUp, Users, BarChart3,
   FileText, RefreshCw, Building2, Phone
 } from "lucide-react";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { FileAddIcon, SharedDriveIcon, WalletAdd01Icon, Payment02Icon, WorkUpdateIcon, ShapeCollectionIcon, IdVerifiedIcon, UserSwitchIcon, NewOfficeIcon, CheckmarkSquare02Icon, LockedIcon, ValidationApprovalIcon, TeamviewerIcon, MoneyLockIcon, ArrowRight02Icon, UserAiIcon} from '@hugeicons/core-free-icons'
 import { formatNaira } from "@/lib/utils";
 
 // ─── Fade-up animation helper ─────────────────────────────────────
@@ -38,9 +40,9 @@ function FadeUp({
 // STATS BAR
 // ══════════════════════════════════════════════════════════════════
 const stats = [
-  { value: "4.2M+",   label: "Nigerian freelancers & service providers" },
-  { value: "67%",     label: "have been paid late or not at all" },
-  { value: "₦1.8T",  label: "freelance economy with near-zero payment protection" },
+  { value: "4.2M+", label: "Nigerian freelancers & service providers" },
+  { value: "67%", label: "have been paid late or not at all" },
+  { value: "₦1.8T", label: "freelance economy with near-zero payment protection" },
 ];
 
 export function StatsBar() {
@@ -67,32 +69,37 @@ export function StatsBar() {
 // ══════════════════════════════════════════════════════════════════
 // HOW IT WORKS
 // ══════════════════════════════════════════════════════════════════
-const providerSteps = [
-  {
-    n: "01",
-    title: "Create your project",
-    body: "Fill in your project details and break it into milestones - each with a clear deliverable and payment amount. Takes under 2 minutes.",
-    icon: FileText,
-  },
-  {
-    n: "02",
-    title: "Share the link",
-    body: "Send your unique project link to your client via WhatsApp, email, or LinkedIn. They see the full milestone plan before committing.",
-    icon: Phone,
-  },
-  {
-    n: "03",
-    title: "Client funds the project",
-    body: "Your client pays the full amount into a dedicated bank account created just for this project. Funds are locked - not sent to you yet.",
-    icon: Building2,
-  },
-  {
-    n: "04",
-    title: "Get paid per milestone",
-    body: "Submit each milestone. When your client approves, payment releases automatically. No chasing. No waiting. No faith required.",
-    icon: Banknote,
-  },
-];
+const providerSteps: {
+  n: string;
+  title: string;
+  body: string;
+  icon: (props: any) => JSX.Element;
+}[] = [
+    {
+      n: "01",
+      title: "Create your project",
+      body: "Fill in your project details and break it into milestones - each with a clear deliverable and payment amount. Takes under 2 minutes.",
+      icon: (props: any) => <HugeiconsIcon icon={FileAddIcon} {...props} />,
+    },
+    {
+      n: "02",
+      title: "Share the link",
+      body: "Send your unique project link to your client via WhatsApp, email, or LinkedIn. They see the full milestone plan before committing.",
+      icon: (props: any) => <HugeiconsIcon icon={SharedDriveIcon} {...props} />,
+    },
+    {
+      n: "03",
+      title: "Client funds the project",
+      body: "Your client pays the full amount into a dedicated bank account created just for this project. Funds are locked - not sent to you yet.",
+      icon: (props: any) => <HugeiconsIcon icon={WalletAdd01Icon} {...props} />,
+    },
+    {
+      n: "04",
+      title: "Get paid per milestone",
+      body: "Submit each milestone. When your client approves, payment releases automatically. No chasing. No waiting. No faith required.",
+      icon: (props: any) => <HugeiconsIcon icon={Payment02Icon} {...props} />,
+    },
+  ];
 
 export function HowItWorksSection() {
   return (
@@ -122,7 +129,7 @@ export function HowItWorksSection() {
                       {step.n}
                     </span>
                     <div className="w-10 h-10 bg-forest-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-forest-100 transition-colors">
-                      <step.icon size={18} className="text-forest-700" />
+                      <step.icon size={25} className="text-forest-700" />
                     </div>
                   </div>
                   <h3 className="font-display font-bold text-slate-900 mb-2 text-lg leading-tight">
@@ -144,32 +151,32 @@ export function HowItWorksSection() {
 // ══════════════════════════════════════════════════════════════════
 const providerBenefits = [
   {
-    icon: Shield,
+    icon: (props: any) => <HugeiconsIcon icon={WorkUpdateIcon} {...props} />,
     title: "Stop working on faith",
     body: "Client funds the full project before you start. You know money is locked and protected before you open your laptop.",
   },
   {
-    icon: TrendingUp,
+    icon: (props: any) => <HugeiconsIcon icon={ShapeCollectionIcon} {...props} />,
     title: "Improve your cash flow",
     body: "Get paid progressively as you deliver. No more waiting until the end to receive anything - earn as you go.",
   },
   {
-    icon: Star,
+    icon: (props: any) => <HugeiconsIcon icon={IdVerifiedIcon} {...props} />,
     title: "Build a verified track record",
     body: "Every completed project builds your public reputation score. Clients can see your completion rate and verified ID before hiring.",
   },
   {
-    icon: Users,
+    icon: (props: any) => <HugeiconsIcon icon={UserSwitchIcon} {...props} />,
     title: "Works for any service",
     body: "Developer, designer, tutor, consultant, photographer, content writer - if you deliver a service, MilePay protects your payment.",
   },
   {
-    icon: Zap,
+    icon: (props: any) => <HugeiconsIcon icon={NewOfficeIcon} {...props} />,
     title: "Look professional to enterprise clients",
     body: "Send a clean project agreement instead of a WhatsApp voice note. MilePay makes small providers look serious.",
   },
   {
-    icon: Clock,
+    icon: (props: any) => <HugeiconsIcon icon={CheckmarkSquare02Icon} {...props} />,
     title: "72-hour auto-approval",
     body: "If your client doesn't respond within 72 hours of delivery, the milestone is automatically approved and your payment releases.",
   },
@@ -192,7 +199,7 @@ export function ForProvidersSection() {
               clients have been burned before and won't pay upfront. MilePay removes that friction.
             </p>
             <Link href="/register?role=provider" className="btn-secondary btn-lg inline-flex items-center gap-2 sm:text-medium text-sm">
-              Protect my next project <ArrowRight size={18} />
+              Protect my next project <HugeiconsIcon icon={ArrowRight02Icon} size={18} />
             </Link>
           </FadeUp>
 
@@ -201,7 +208,7 @@ export function ForProvidersSection() {
               <FadeUp key={b.title} delay={i * 0.07}>
                 <div className="bg-forest-800/50 border border-forest-700/50 rounded-xl p-4 hover:border-forest-500/50 hover:bg-forest-800 transition-all duration-200">
                   <div className="w-9 h-9 bg-forest-700/60 rounded-lg flex items-center justify-center mb-3">
-                    <b.icon size={16} className="text-amber-400" />
+                    <b.icon size={25} className="text-amber-400" />
                   </div>
                   <h3 className="text-white font-semibold text-sm mb-1.5 leading-tight">{b.title}</h3>
                   <p className="text-slate-300 text-xs leading-relaxed">{b.body}</p>
@@ -220,22 +227,22 @@ export function ForProvidersSection() {
 // ══════════════════════════════════════════════════════════════════
 const clientBenefits = [
   {
-    icon: Lock,
+    icon: (props: any) => <HugeiconsIcon icon={LockedIcon} {...props} />,
     title: "Pay once, control everything",
     body: "Fund the full project upfront. Your money is locked - the provider never touches it until you approve each milestone.",
   },
   {
-    icon: CheckCircle,
+    icon: (props: any) => <HugeiconsIcon icon={ValidationApprovalIcon} {...props} />,
     title: "Approve only what's delivered",
     body: "Review each milestone before payment releases. Request revisions if needed. You're in control at every step.",
   },
   {
-    icon: AlertTriangle,
+    icon: (props: any) => <HugeiconsIcon icon={TeamviewerIcon} {...props} />,
     title: "Dispute protection",
     body: "If something goes wrong, raise a dispute. Funds are frozen while our team reviews evidence from both sides.",
   },
   {
-    icon: BarChart3,
+    icon: (props: any) => <HugeiconsIcon icon={IdVerifiedIcon} {...props} />,
     title: "See verified track records",
     body: "Every provider's completion rate, past reviews, and ID verification status is visible before you commit.",
   },
@@ -267,7 +274,7 @@ export function ForClientsSection() {
               {clientBenefits.map((b) => (
                 <div key={b.title} className="flex gap-4">
                   <div className="w-9 h-9 bg-forest-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <b.icon size={16} className="text-forest-700" />
+                    <b.icon size={25} className="text-forest-700" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900 text-sm mb-0.5">{b.title}</h3>
@@ -277,7 +284,7 @@ export function ForClientsSection() {
               ))}
             </div>
             <Link href="/register?role=client" className="btn-primary btn-lg inline-flex items-center gap-2">
-              Hire with confidence <ArrowRight size={18} />
+              Hire with confidence <HugeiconsIcon icon={ArrowRight02Icon} size={18} />
             </Link>
           </FadeUp>
         </div>
@@ -293,7 +300,7 @@ function ClientProtectionVisual() {
       <div className="card p-5 border-forest-100">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 bg-forest-100 rounded-xl flex items-center justify-center">
-            <Lock size={18} className="text-forest-700" />
+            <HugeiconsIcon icon={MoneyLockIcon} size={25} className="text-forest-700" />
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-900">Funds locked</p>
@@ -304,7 +311,7 @@ function ClientProtectionVisual() {
           </div>
         </div>
         <div className="bg-forest-50 rounded-lg p-3 text-xs text-forest-700 font-medium">
-          🔒 Funds held securely - not released until you approve each milestone
+          Funds held securely - not released until you approve each milestone
         </div>
       </div>
 
@@ -457,8 +464,8 @@ export function PricingSection() {
           {/* Provider card */}
           <FadeUp>
             <div className="card-forest p-8 h-full">
-              <div className="w-10 h-10 bg-forest-700 rounded-xl flex items-center justify-center mb-5">
-                <Banknote size={20} className="text-amber-400" />
+              <div className="w-10 h-10 bg-forest-50 rounded-xl flex items-center justify-center mb-5">
+                <HugeiconsIcon icon={IdVerifiedIcon} size={25} className="text-forest-400" />
               </div>
               <p className="text-forest-300 text-sm font-medium mb-1">For service providers</p>
               <div className="flex items-baseline gap-1 mb-2">
@@ -489,7 +496,7 @@ export function PricingSection() {
           <FadeUp delay={0.1}>
             <div className="card border-forest-200 p-8 h-full bg-forest-50">
               <div className="w-10 h-10 bg-forest-100 rounded-xl flex items-center justify-center mb-5">
-                <Shield size={20} className="text-forest-700" />
+                <HugeiconsIcon icon={NewOfficeIcon} size={25} className="text-forest-400" />
               </div>
               <p className="text-forest-700 text-sm font-medium mb-1">For clients</p>
               <div className="flex items-baseline gap-1 mb-2">
@@ -540,21 +547,21 @@ const stories = [
     quote: "I delivered a full website redesign and the client just stopped responding. Three months of work, ₦180,000 gone. MilePay would have changed everything about that situation.",
     name: "Tunde A.",
     role: "Full-stack developer, Lagos",
-    emoji: "💻",
+    emoji: (props: any) => <HugeiconsIcon icon={UserAiIcon} {...props} />,
     highlight: "₦180,000 lost to ghosting",
   },
   {
     quote: "My IELTS student paid for 6 weeks, attended 3, then disputed the payment and got a refund from their bank. I needed proof the sessions happened. MilePay's milestone records would have been that proof.",
     name: "Mrs. Amaka O.",
     role: "IELTS tutor, Abuja",
-    emoji: "📚",
+    emoji: (props: any) => <HugeiconsIcon icon={UserAiIcon} {...props} />,
     highlight: "Dispute won with zero evidence",
   },
   {
     quote: "I hired a designer on Instagram. Beautiful portfolio. Paid ₦95,000 upfront. She delivered 30% of the work and went quiet. I had no contract, no recourse, nothing.",
     name: "Funmilayo B.",
     role: "SME owner, Lagos",
-    emoji: "🛍️",
+    emoji: (props: any) => <HugeiconsIcon icon={UserAiIcon} {...props} />,
     highlight: "₦95,000 paid, 30% delivered",
   },
 ];
@@ -574,7 +581,7 @@ export function SocialProofSection() {
           {stories.map((s, i) => (
             <FadeUp key={s.name} delay={i * 0.1}>
               <div className="card p-6 h-full flex flex-col">
-                <div className="text-3xl mb-4">{s.emoji}</div>
+                <div className="text-3xl mb-4 text-forest-600"><s.emoji size={36} /></div>
                 <div className="bg-red-50 border border-red-100 rounded-lg px-3 py-1.5 text-xs font-semibold text-red-700 mb-4 inline-block w-fit">
                   {s.highlight}
                 </div>
@@ -658,9 +665,8 @@ export function FAQSection() {
                   </span>
                   <ChevronDown
                     size={18}
-                    className={`text-slate-400 flex-shrink-0 mt-0.5 transition-transform duration-200 ${
-                      open === i ? "rotate-180" : ""
-                    }`}
+                    className={`text-slate-400 flex-shrink-0 mt-0.5 transition-transform duration-200 ${open === i ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
                 {open === i && (
@@ -703,7 +709,7 @@ export function FinalCTASection() {
               className="btn-secondary btn-lg inline-flex items-center justify-center gap-2 sm:text-medium text-sm"
             >
               I provide services - protect my work
-              <ArrowRight size={18} />
+              <HugeiconsIcon icon={ArrowRight02Icon} size={18} />
             </Link>
             <Link
               href="/register?role=client"

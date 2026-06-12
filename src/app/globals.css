@@ -109,7 +109,7 @@
 @layer components {
 
   /* Container */
-  .container-wide   { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+  .container-wide   { @apply max-w-7xl mx-auto px-4 sm:px-4 lg:px-4; }
   .container-narrow { @apply max-w-3xl mx-auto px-4 sm:px-6; }
   .container-form   { @apply max-w-lg mx-auto px-4 sm:px-6; }
 

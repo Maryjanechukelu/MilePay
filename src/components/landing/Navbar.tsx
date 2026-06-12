@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Menu03Icon } from '@hugeicons/core-free-icons'
 
 const navLinks = [
   { href: "#how-it-works", label: "How it works" },
@@ -67,10 +69,10 @@ export function Navbar() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+            className="md:hidden p-2 rounded-lg border border-forest-600 text-slate-600 hover:bg-slate-100 transition-colors"
             aria-label="Toggle menu"
           >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            {menuOpen ? <X size={25} /> : <HugeiconsIcon icon={Menu03Icon} size={25} />}
           </button>
         </div>
 

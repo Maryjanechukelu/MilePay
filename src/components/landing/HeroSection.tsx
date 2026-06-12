@@ -1,7 +1,10 @@
 "use client";
+import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Shield, CheckCircle, Lock, Banknote } from "lucide-react";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowRight02Icon, SharedDriveIcon, WalletAdd01Icon, Payment02Icon, WorkUpdateIcon, } from '@hugeicons/core-free-icons'
 
 const milestones = [
   { label: "Wireframes", amount: "₦40,000", state: "paid" },
@@ -10,14 +13,14 @@ const milestones = [
 ];
 
 const stateStyles = {
-  paid:   { bar: "bg-forest-600", text: "text-forest-700", badge: "bg-forest-50 text-forest-700 border-forest-200", label: "Paid" },
-  active: { bar: "bg-amber-500",  text: "text-amber-700",  badge: "bg-amber-50 text-amber-800 border-amber-200",   label: "In progress" },
-  locked: { bar: "bg-slate-200",  text: "text-slate-400",  badge: "bg-slate-50 text-slate-400 border-slate-200",   label: "Locked" },
+  paid: { bar: "bg-forest-600", text: "text-forest-700", badge: "bg-forest-50 text-forest-700 border-forest-200", label: "Paid" },
+  active: { bar: "bg-amber-500", text: "text-amber-700", badge: "bg-amber-50 text-amber-800 border-amber-200", label: "In progress" },
+  locked: { bar: "bg-slate-200", text: "text-slate-400", badge: "bg-slate-50 text-slate-400 border-slate-200", label: "Locked" },
 };
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-forest-900 pt-16">
+    <section className="relative sm:h-[calc(100vh-4rem)] flex items-center overflow-hidden bg-forest-900 pt-16 rounded-b-5xl">
       {/* Mesh background */}
       <div className="absolute inset-0 bg-hero-mesh opacity-60 pointer-events-none" />
 
@@ -31,7 +34,7 @@ export function HeroSection() {
         }}
       />
 
-      <div className="container-wide relative z-10 py-20">
+      <div className="container-wide relative z-10 py-16">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
 
           {/* Left — copy */}
@@ -66,7 +69,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-forest-200 text-lg leading-relaxed max-w-lg mb-8"
+              className="text-forest-200 text-lg leading-relaxed max-w-3xl mb-8"
             >
               MilePay holds your project funds securely and releases payment
               automatically as each milestone is approved. No more ghosting.
@@ -85,7 +88,7 @@ export function HeroSection() {
                 className="btn-secondary btn-lg inline-flex items-center justify-center gap-2 sm:text-medium text-sm"
               >
                 Protect my next project
-                <ArrowRight size={18} />
+                <HugeiconsIcon icon={ArrowRight02Icon} size={18} />
               </Link>
               <Link
                 href="/register?role=client"
@@ -103,20 +106,21 @@ export function HeroSection() {
               className="flex flex-wrap gap-3"
             >
               {[
-                { icon: Shield,      text: "Funds protected" },
-                { icon: CheckCircle, text: "Free for clients" },
-                { icon: Lock,        text: "Nomba-powered" },
-                { icon: Banknote,    text: "Bank transfer payments" },
-              ].map(({ icon: Icon, text }) => (
+                { icon: <HugeiconsIcon icon={WorkUpdateIcon} />, text: "Funds protected" },
+                { icon: <HugeiconsIcon icon={SharedDriveIcon} />, text: "Free for clients" },
+                { icon: <HugeiconsIcon icon={WalletAdd01Icon} />, text: "Nomba-powered" },
+                { icon: <HugeiconsIcon icon={Payment02Icon} />, text: "Bank transfer payments" },
+              ].map(({ icon, text }) => (
                 <div
                   key={text}
                   className="flex items-center gap-1.5 text-forest-300 text-xs font-medium"
                 >
-                  <Icon size={13} className="text-forest-400" />
+                  {React.cloneElement(icon as React.ReactElement, { size: 20, className: "text-forest-400" })}
                   {text}
                 </div>
               ))}
             </motion.div>
+
           </div>
 
           {/* Right — milestone waterfall animation */}
@@ -132,7 +136,7 @@ export function HeroSection() {
       </div>
 
       {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-cream to-transparent pointer-events-none" />
+      {/* <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-cream to-transparent pointer-events-none" /> */}
     </section>
   );
 }
