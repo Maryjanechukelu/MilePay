@@ -48,13 +48,21 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "mp_user",
-      storage: createJSONStorage(() =>
-        typeof window !== "undefined" ? localStorage : ({
-          getItem: () => null,
-          setItem: () => {},
-          removeItem: () => {},
-        } as Storage)
-      ),
+      storage: createJSONStorage(() => {
+        if (typeof window !== "undefined") return localStorage;
+
+        // Server-side / test-safe no-op storage that implements the full Storage interface
+        const noopStorage: Storage = {
+          getItem: (_: string) => null,
+          setItem: (_: string, __: string) => undefined,
+          removeItem: (_: string) => undefined,
+          clear: () => undefined,
+          key: (_: number) => null,
+          length: 0,
+        };
+
+        return noopStorage;
+      }),
       partialize: (state) => ({
         user: state.user,
         token: state.token,
