@@ -82,14 +82,14 @@ export function HeroSection() {
             >
               <Link
                 href="/register?role=provider"
-                className="btn-secondary btn-lg inline-flex items-center justify-center gap-2"
+                className="btn-secondary btn-lg inline-flex items-center justify-center gap-2 sm:text-medium text-sm"
               >
                 Protect my next project
                 <ArrowRight size={18} />
               </Link>
               <Link
                 href="/register?role=client"
-                className="btn-outline btn-lg border-forest-400 text-forest-100 hover:bg-forest-800 inline-flex items-center justify-center gap-2"
+                className="btn-outline btn-lg border-forest-400 text-forest-100 hover:bg-forest-800 inline-flex items-center justify-center gap-2 sm:text-medium text-sm"
               >
                 Hire with confidence
               </Link>

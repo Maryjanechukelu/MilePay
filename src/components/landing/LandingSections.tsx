@@ -71,7 +71,7 @@ const providerSteps = [
   {
     n: "01",
     title: "Create your project",
-    body: "Fill in your project details and break it into milestones — each with a clear deliverable and payment amount. Takes under 2 minutes.",
+    body: "Fill in your project details and break it into milestones - each with a clear deliverable and payment amount. Takes under 2 minutes.",
     icon: FileText,
   },
   {
@@ -83,7 +83,7 @@ const providerSteps = [
   {
     n: "03",
     title: "Client funds the project",
-    body: "Your client pays the full amount into a dedicated bank account created just for this project. Funds are locked — not sent to you yet.",
+    body: "Your client pays the full amount into a dedicated bank account created just for this project. Funds are locked - not sent to you yet.",
     icon: Building2,
   },
   {
@@ -151,7 +151,7 @@ const providerBenefits = [
   {
     icon: TrendingUp,
     title: "Improve your cash flow",
-    body: "Get paid progressively as you deliver. No more waiting until the end to receive anything — earn as you go.",
+    body: "Get paid progressively as you deliver. No more waiting until the end to receive anything - earn as you go.",
   },
   {
     icon: Star,
@@ -161,7 +161,7 @@ const providerBenefits = [
   {
     icon: Users,
     title: "Works for any service",
-    body: "Developer, designer, tutor, consultant, photographer, content writer — if you deliver a service, MilePay protects your payment.",
+    body: "Developer, designer, tutor, consultant, photographer, content writer - if you deliver a service, MilePay protects your payment.",
   },
   {
     icon: Zap,
@@ -191,7 +191,7 @@ export function ForProvidersSection() {
               The best Nigerian freelancers lose clients not because of poor work — but because
               clients have been burned before and won't pay upfront. MilePay removes that friction.
             </p>
-            <Link href="/register?role=provider" className="btn-secondary btn-lg inline-flex items-center gap-2">
+            <Link href="/register?role=provider" className="btn-secondary btn-lg inline-flex items-center gap-2 sm:text-medium text-sm">
               Protect my next project <ArrowRight size={18} />
             </Link>
           </FadeUp>
@@ -204,7 +204,7 @@ export function ForProvidersSection() {
                     <b.icon size={16} className="text-amber-400" />
                   </div>
                   <h3 className="text-white font-semibold text-sm mb-1.5 leading-tight">{b.title}</h3>
-                  <p className="text-forest-300 text-xs leading-relaxed">{b.body}</p>
+                  <p className="text-slate-300 text-xs leading-relaxed">{b.body}</p>
                 </div>
               </FadeUp>
             ))}
@@ -222,7 +222,7 @@ const clientBenefits = [
   {
     icon: Lock,
     title: "Pay once, control everything",
-    body: "Fund the full project upfront. Your money is locked — the provider never touches it until you approve each milestone.",
+    body: "Fund the full project upfront. Your money is locked - the provider never touches it until you approve each milestone.",
   },
   {
     icon: CheckCircle,
@@ -304,7 +304,7 @@ function ClientProtectionVisual() {
           </div>
         </div>
         <div className="bg-forest-50 rounded-lg p-3 text-xs text-forest-700 font-medium">
-          🔒 Funds held securely — not released until you approve each milestone
+          🔒 Funds held securely - not released until you approve each milestone
         </div>
       </div>
 
@@ -316,7 +316,7 @@ function ClientProtectionVisual() {
         </p>
         <div className="flex gap-2">
           <button className="flex-1 btn-primary btn-sm text-center">
-            ✓ Approve — release ₦70,560
+            ✓ Approve - release ₦70,560
           </button>
           <button className="btn-ghost btn-sm border border-slate-200">
             Request revision
@@ -351,15 +351,15 @@ export function VirtualAccountSection() {
               <span className="gradient-text">its own bank account.</span>
             </h2>
             <p className="body-lg mb-6 max-w-lg">
-              Every MilePay project is backed by a dedicated Nomba virtual account —
+              Every MilePay project is backed by a dedicated Nomba virtual account -
               a real Nigerian bank account number that any bank in Nigeria can transfer to.
               No card details. No friction. Just the most familiar payment method in Nigeria.
             </p>
             <div className="space-y-3">
               {[
-                "Transfer from any Nigerian bank — GTBank, Access, Zenith, FirstBank, OPay, Kuda",
-                "Payments reconcile automatically — underpayment detected instantly",
-                "Every naira is traceable — full audit trail per project",
+                "Transfer from any Nigerian bank - GTBank, Access, Zenith, FirstBank, OPay, Kuda",
+                "Payments reconcile automatically - underpayment detected instantly",
+                "Every naira is traceable - full audit trail per project",
                 "Overpayments tracked and refundable at project close",
               ].map((point) => (
                 <div key={point} className="flex items-start gap-3">
@@ -423,7 +423,7 @@ function VirtualAccountVisual() {
           </div>
           <div className="flex items-center justify-between bg-amber-50 rounded-lg px-3 py-2">
             <span className="text-xs text-slate-600">Project status</span>
-            <span className="text-xs font-semibold text-amber-700">Active — work in progress</span>
+            <span className="text-xs font-semibold text-amber-700">Active - work in progress</span>
           </div>
         </div>
 
@@ -497,7 +497,7 @@ export function PricingSection() {
               </div>
               <p className="text-slate-600 text-sm mb-6">
                 Clients pay nothing to use MilePay. Review milestones, request revisions,
-                and raise disputes — all at zero cost.
+                and raise disputes - all at zero cost.
               </p>
               <div className="space-y-2.5">
                 {[
@@ -518,7 +518,7 @@ export function PricingSection() {
         </div>
 
         {/* Revenue callout */}
-        <FadeUp delay={0.2}>
+        {/* <FadeUp delay={0.2}>
           <div className="mt-8 bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
             <p className="text-amber-900 text-sm font-medium">
               At ₦40,000 average milestone, MilePay earns ₦800 per milestone.
@@ -526,7 +526,7 @@ export function PricingSection() {
               <span className="font-bold"> At 1,000 projects a month: ₦3.2M MRR.</span>
             </p>
           </div>
-        </FadeUp>
+        </FadeUp> */}
       </div>
     </section>
   );
@@ -694,22 +694,22 @@ export function FinalCTASection() {
           </h2>
           <p className="text-forest-200 text-lg mb-10 max-w-lg mx-auto text-balance">
             Join Nigerian service providers who've stopped chasing clients
-            and started building trust that pays — literally.
+            and started building trust that pays - literally.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/register?role=provider"
-              className="btn-secondary btn-lg inline-flex items-center justify-center gap-2"
+              className="btn-secondary btn-lg inline-flex items-center justify-center gap-2 sm:text-medium text-sm"
             >
-              I provide services — protect my work
+              I provide services - protect my work
               <ArrowRight size={18} />
             </Link>
             <Link
               href="/register?role=client"
-              className="btn-outline btn-lg border-forest-400 text-forest-100 hover:bg-forest-800 inline-flex items-center justify-center gap-2"
+              className="btn-outline btn-lg border-forest-400 text-forest-100 hover:bg-forest-800 inline-flex items-center justify-center gap-2 sm:text-medium text-sm"
             >
-              I hire services — pay with confidence
+              I hire services - pay with confidence
             </Link>
           </div>
 
