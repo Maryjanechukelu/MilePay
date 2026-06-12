@@ -1,0 +1,217 @@
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  darkMode: ["class"],
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // MilePay brand palette
+        forest: {
+          950: "#050F09",
+          900: "#0A2E1A",
+          800: "#0F3D23",
+          700: "#14522D",
+          600: "#1A6B3A",
+          500: "#218348",
+          400: "#2EA05A",
+          300: "#4DBF77",
+          200: "#84D9A4",
+          100: "#C2EDD2",
+          50:  "#E8F5EE",
+        },
+        amber: {
+          950: "#3D2200",
+          900: "#6B3A00",
+          800: "#945100",
+          700: "#B86700",
+          600: "#D4900A",
+          500: "#E8A820",
+          400: "#F5C542",
+          300: "#FAD96E",
+          200: "#FDEAA4",
+          100: "#FEF5D4",
+          50:  "#FFFBEC",
+        },
+        slate: {
+          950: "#080C0C",
+          900: "#0E1515",
+          800: "#1C2B2B",
+          700: "#2A3F3F",
+          600: "#3A5555",
+          500: "#4F7070",
+          400: "#6B8E8E",
+          300: "#91AEAE",
+          200: "#BECECE",
+          100: "#E0EAEA",
+          50:  "#F2F7F7",
+        },
+        cream: "#F7F5F0",
+        // Semantic aliases
+        background: "#F7F5F0",
+        foreground: "#1C2B2B",
+        primary: {
+          DEFAULT: "#0A2E1A",
+          foreground: "#F7F5F0",
+        },
+        secondary: {
+          DEFAULT: "#D4900A",
+          foreground: "#FFFBEC",
+        },
+        muted: {
+          DEFAULT: "#E8F5EE",
+          foreground: "#4F7070",
+        },
+        accent: {
+          DEFAULT: "#E8F5EE",
+          foreground: "#0A2E1A",
+        },
+        destructive: {
+          DEFAULT: "#C0392B",
+          foreground: "#FFF5F5",
+        },
+        success: {
+          DEFAULT: "#218348",
+          foreground: "#E8F5EE",
+        },
+        warning: {
+          DEFAULT: "#D4900A",
+          foreground: "#FFFBEC",
+        },
+        border: "#BECECE",
+        input: "#BECECE",
+        ring: "#218348",
+        card: {
+          DEFAULT: "#FFFFFF",
+          foreground: "#1C2B2B",
+        },
+        popover: {
+          DEFAULT: "#FFFFFF",
+          foreground: "#1C2B2B",
+        },
+      },
+      fontFamily: {
+        display: ["Syne", "system-ui", "sans-serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
+      },
+      fontSize: {
+        "2xs": ["0.625rem", { lineHeight: "0.875rem" }],
+        xs:   ["0.75rem",  { lineHeight: "1rem" }],
+        sm:   ["0.875rem", { lineHeight: "1.25rem" }],
+        base: ["1rem",     { lineHeight: "1.5rem" }],
+        lg:   ["1.125rem", { lineHeight: "1.75rem" }],
+        xl:   ["1.25rem",  { lineHeight: "1.75rem" }],
+        "2xl":["1.5rem",   { lineHeight: "2rem" }],
+        "3xl":["1.875rem", { lineHeight: "2.25rem" }],
+        "4xl":["2.25rem",  { lineHeight: "2.5rem" }],
+        "5xl":["3rem",     { lineHeight: "1" }],
+        "6xl":["3.75rem",  { lineHeight: "1" }],
+        "7xl":["4.5rem",   { lineHeight: "1" }],
+        "8xl":["6rem",     { lineHeight: "1" }],
+      },
+      borderRadius: {
+        none: "0",
+        sm:   "0.25rem",
+        DEFAULT:"0.5rem",
+        md:   "0.625rem",
+        lg:   "0.75rem",
+        xl:   "1rem",
+        "2xl":"1.25rem",
+        "3xl":"1.5rem",
+        full: "9999px",
+      },
+      boxShadow: {
+        xs:  "0 1px 2px 0 rgb(0 0 0 / 0.04)",
+        sm:  "0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.06)",
+        DEFAULT:"0 2px 8px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05)",
+        md:  "0 4px 12px -2px rgb(0 0 0 / 0.10), 0 2px 6px -2px rgb(0 0 0 / 0.06)",
+        lg:  "0 8px 24px -4px rgb(0 0 0 / 0.12), 0 4px 8px -4px rgb(0 0 0 / 0.06)",
+        xl:  "0 16px 40px -8px rgb(0 0 0 / 0.14), 0 8px 16px -8px rgb(0 0 0 / 0.06)",
+        "2xl":"0 24px 64px -12px rgb(0 0 0 / 0.18)",
+        glow:  "0 0 0 3px rgb(33 131 72 / 0.25)",
+        "glow-amber": "0 0 0 3px rgb(212 144 10 / 0.25)",
+        inner:"inset 0 2px 4px 0 rgb(0 0 0 / 0.05)",
+        none: "none",
+      },
+      animation: {
+        "fade-in":      "fadeIn 0.4s ease forwards",
+        "fade-up":      "fadeUp 0.5s ease forwards",
+        "slide-in-right":"slideInRight 0.4s ease forwards",
+        "milestone-drop":"milestoneDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "pulse-dot":    "pulseDot 2s ease-in-out infinite",
+        "shimmer":      "shimmer 1.5s linear infinite",
+        "count-up":     "countUp 1.5s ease-out forwards",
+        "waterfall":    "waterfall 3s ease-in-out infinite",
+      },
+      keyframes: {
+        fadeIn: {
+          "0%":   { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        fadeUp: {
+          "0%":   { opacity: "0", transform: "translateY(16px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        slideInRight: {
+          "0%":   { opacity: "0", transform: "translateX(16px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        milestoneDrop: {
+          "0%":   { opacity: "0", transform: "translateY(-8px) scale(0.96)" },
+          "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        pulseDot: {
+          "0%, 100%": { opacity: "1", transform: "scale(1)" },
+          "50%":      { opacity: "0.5", transform: "scale(1.3)" },
+        },
+        shimmer: {
+          "0%":   { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        countUp: {
+          "0%":   { opacity: "0", transform: "translateY(8px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        waterfall: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%":      { transform: "translateY(4px)" },
+        },
+      },
+      spacing: {
+        "4.5": "1.125rem",
+        "13":  "3.25rem",
+        "15":  "3.75rem",
+        "18":  "4.5rem",
+        "22":  "5.5rem",
+        "26":  "6.5rem",
+        "30":  "7.5rem",
+        "34":  "8.5rem",
+        "128": "32rem",
+        "144": "36rem",
+      },
+      maxWidth: {
+        "8xl": "88rem",
+        "9xl": "96rem",
+      },
+      backgroundImage: {
+        "forest-gradient": "linear-gradient(135deg, #0A2E1A 0%, #14522D 50%, #0A2E1A 100%)",
+        "amber-gradient":  "linear-gradient(135deg, #D4900A 0%, #E8A820 100%)",
+        "shimmer-gradient":"linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)",
+        "card-gradient":   "linear-gradient(145deg, #ffffff 0%, #F7F5F0 100%)",
+        "hero-mesh":       "radial-gradient(ellipse at 20% 50%, rgba(33,131,72,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(212,144,10,0.10) 0%, transparent 50%)",
+      },
+      transitionTimingFunction: {
+        spring: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+        smooth: "cubic-bezier(0.4, 0, 0.2, 1)",
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;
