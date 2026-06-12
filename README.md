@@ -165,4 +165,4 @@ MilePay uses a custom design token system built on Tailwind.
 
 ---
 
-Built by Codechic Enterprise · Hackathon submission for Nomba devcareer.io · June 2026
+Hackathon submission for Nomba devcareer.io · June 2026
