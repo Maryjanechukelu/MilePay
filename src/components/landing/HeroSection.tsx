@@ -10,7 +10,7 @@ const milestones = [
 ];
 
 const stateStyles = {
-  paid:   { bar: "bg-forest-500", text: "text-forest-700", badge: "bg-forest-50 text-forest-700 border-forest-200", label: "Paid" },
+  paid:   { bar: "bg-forest-600", text: "text-forest-700", badge: "bg-forest-50 text-forest-700 border-forest-200", label: "Paid" },
   active: { bar: "bg-amber-500",  text: "text-amber-700",  badge: "bg-amber-50 text-amber-800 border-amber-200",   label: "In progress" },
   locked: { bar: "bg-slate-200",  text: "text-slate-400",  badge: "bg-slate-50 text-slate-400 border-slate-200",   label: "Locked" },
 };
@@ -149,7 +149,7 @@ function MilestoneWaterfall() {
       >
         <div className="flex items-start justify-between mb-3">
           <div>
-            <p className="text-xs text-forest-300 font-medium mb-1">Brand Identity Project</p>
+            <p className="text-xs text-gray-300 font-medium mb-1">Brand Identity Project</p>
             <p className="text-white font-display font-bold text-xl">₦180,000</p>
           </div>
           <div className="bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-semibold px-2.5 py-1 rounded-full">
@@ -222,7 +222,7 @@ function MilestoneWaterfall() {
         </div>
         <div>
           <p className="text-white text-xs font-semibold">Milestone 1 approved</p>
-          <p className="text-forest-300 text-xs">₦39,200 released to Tunde ✓</p>
+          <p className="text-gray-400 text-xs">₦39,200 released to Tunde ✓</p>
         </div>
         <div className="ml-auto w-2 h-2 bg-forest-400 rounded-full animate-pulse-dot" />
       </motion.div>
