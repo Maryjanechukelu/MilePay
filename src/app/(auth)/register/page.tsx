@@ -55,7 +55,7 @@ function RegisterForm() {
 
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-lg">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
             <div className="w-9 h-9 bg-forest-900 rounded-xl flex items-center justify-center">
@@ -86,16 +86,19 @@ function RegisterForm() {
                     : "border-slate-200 hover:border-slate-300 bg-white"
                 )}
               >
-                <r.icon
-                  size={18}
-                  className={selectedRole === r.value ? "text-forest-700 mb-2" : "text-slate-400 mb-2"}
+                <div className="flex items-center gap-2">
+                  <r.icon
+                  size={15}
+                  className={selectedRole === r.value ? "text-forest-700 mb-1" : "text-slate-400 mb-1"}
                 />
-                <p className={cn("text-xs font-bold mb-0.5 leading-tight",
+                 <p className={cn("text-xs font-bold mb-0.5 leading-tight",
                   selectedRole === r.value ? "text-forest-900" : "text-slate-700"
                 )}>
                   {r.label}
                 </p>
+                </div>
                 <p className="text-xs text-slate-400 leading-tight">{r.sub}</p>
+               
               </button>
             ))}
           </div>
