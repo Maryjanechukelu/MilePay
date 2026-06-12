@@ -47,7 +47,7 @@ export function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="px-3 py-2 text-sm font-medium text-slate-400 hover:text-forest-900 hover:bg-forest-50 rounded-lg transition-colors"
+                className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-forest-900 hover:bg-forest-50 rounded-lg transition-colors"
               >
                 {l.label}
               </Link>
@@ -56,7 +56,7 @@ export function Navbar() {
 
           {/* CTA buttons */}
           <div className="hidden md:flex items-center gap-2">
-            <Link href="/login" className="btn-ghost text-sm text-slate-400 hover:text-forest-900 hover:bg-forest-50 rounded-lg transition-colors">
+            <Link href="/login" className="btn-ghost text-sm">
               Sign in
             </Link>
             <Link href="/register" className="btn-primary btn-sm">

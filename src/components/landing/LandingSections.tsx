@@ -204,7 +204,7 @@ export function ForProvidersSection() {
                     <b.icon size={16} className="text-amber-400" />
                   </div>
                   <h3 className="text-white font-semibold text-sm mb-1.5 leading-tight">{b.title}</h3>
-                  <p className="text-slate-400 text-xs leading-relaxed">{b.body}</p>
+                  <p className="text-forest-300 text-xs leading-relaxed">{b.body}</p>
                 </div>
               </FadeUp>
             ))}
@@ -518,7 +518,7 @@ export function PricingSection() {
         </div>
 
         {/* Revenue callout */}
-        {/* <FadeUp delay={0.2}>
+        <FadeUp delay={0.2}>
           <div className="mt-8 bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
             <p className="text-amber-900 text-sm font-medium">
               At ₦40,000 average milestone, MilePay earns ₦800 per milestone.
@@ -526,7 +526,7 @@ export function PricingSection() {
               <span className="font-bold"> At 1,000 projects a month: ₦3.2M MRR.</span>
             </p>
           </div>
-        </FadeUp> */}
+        </FadeUp>
       </div>
     </section>
   );
@@ -700,14 +700,14 @@ export function FinalCTASection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/register?role=provider"
-              className="btn-secondary btn-lg inline-flex items-center justify-center gap-2 sm:text-medium text-sm"
+              className="btn-secondary btn-lg inline-flex items-center justify-center gap-2"
             >
               I provide services — protect my work
               <ArrowRight size={18} />
             </Link>
             <Link
               href="/register?role=client"
-              className="btn-outline btn-lg border-forest-400 text-forest-100 hover:bg-forest-800 inline-flex items-center justify-center gap-2 sm:text-medium text-sm"
+              className="btn-outline btn-lg border-forest-400 text-forest-100 hover:bg-forest-800 inline-flex items-center justify-center gap-2"
             >
               I hire services — pay with confidence
             </Link>
@@ -760,7 +760,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs">© 2026 MilePay. All rights reserved.</p>
+          <p className="text-xs">© 2026 MilePay by Codechic Enterprise. All rights reserved.</p>
           <p className="text-xs">Powered by <span className="text-white font-medium">Nomba</span> financial infrastructure.</p>
         </div>
       </div>
