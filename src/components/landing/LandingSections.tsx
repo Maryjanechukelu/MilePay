@@ -766,7 +766,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs">© 2026 MilePay. All rights reserved.</p>
+          <p className="text-xs">© {new Date().getFullYear()} MilePay. All rights reserved.</p>
           <p className="text-xs">Powered by <span className="text-white font-medium">Nomba</span> financial infrastructure.</p>
         </div>
       </div>

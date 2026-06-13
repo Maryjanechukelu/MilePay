@@ -103,7 +103,7 @@ export function HeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="flex flex-wrap gap-3"
+              className="hidden sm:flex flex-row gap-3"
             >
               {[
                 { icon: <HugeiconsIcon icon={WorkUpdateIcon} />, text: "Funds protected" },
