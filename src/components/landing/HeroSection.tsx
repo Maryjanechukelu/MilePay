@@ -73,7 +73,7 @@ export function HeroSection() {
             >
               MilePay holds your project funds securely and releases payment
               automatically as each milestone is approved. No more ghosting.
-              No more sending ₦150,000 to a stranger and hoping for the best.
+              No more sending money to a stranger and hoping for the best.
             </motion.p>
 
             {/* CTAs */}

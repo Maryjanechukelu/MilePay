@@ -72,7 +72,7 @@ export function Navbar() {
             className="md:hidden p-2 rounded-lg border border-forest-600 text-slate-600 hover:bg-slate-100 transition-colors"
             aria-label="Toggle menu"
           >
-            {menuOpen ? <X size={25} /> : <HugeiconsIcon icon={Menu03Icon} size={25} />}
+            {menuOpen ? <X size={25} className="text-slate-300" /> : <HugeiconsIcon icon={Menu03Icon} size={25} className="text-slate-300" />}
           </button>
         </div>
 
