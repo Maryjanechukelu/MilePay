@@ -5,9 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  Plus, TrendingUp, Briefcase, CheckCircle, Clock, ArrowRight,
-  LogOut, Bell, Settings, ChevronRight, Banknote, AlertTriangle, Menu, X
-} from "lucide-react";
+  Plus, LogOut, Settings, ChevronRight, Menu, X } from "lucide-react";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Notification01Icon, DeliveryBox02Icon, InboxCheckIcon, Wallet02Icon, FolderClockIcon, DropboxIcon, MailWarningIcon, BanknoteIcon } from '@hugeicons/core-free-icons'
 

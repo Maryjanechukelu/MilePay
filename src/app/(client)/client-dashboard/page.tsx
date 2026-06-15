@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Shield, Clock, CheckCircle, AlertTriangle, ChevronRight,
-  LogOut, Bell, Settings, Banknote, Package, Menu, X
+  LogOut, Settings, Banknote, Package, Menu, X
 } from "lucide-react";
 import { dashboardApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
@@ -16,7 +16,7 @@ import {
 } from "@/lib/utils";
 import type { ClientDashboard, Project } from "@/types";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Notification01Icon } from "@hugeicons/core-free-icons";
+import { Notification01Icon, DeliveryBox02Icon, InboxCheckIcon, Wallet02Icon, FolderClockIcon, DropboxIcon, } from "@hugeicons/core-free-icons";
 
 export default function ClientDashboardPage() {
   const router = useRouter();
@@ -62,18 +62,19 @@ export default function ClientDashboardPage() {
                 <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} />
               </div>
             </Link>
-            <nav className="hidden sm:flex items-center gap-1">
-              {[
-                { href: "/client-dashboard", label: "My projects" },
-                { href: "/settings", label: "Settings" },
-              ].map((l) => (
-                <Link key={l.href} href={l.href}
-                  className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
-                  {l.label}
-                </Link>
-              ))}
-            </nav>
           </div>
+
+          <nav className="hidden sm:flex items-center gap-1">
+            {[
+              { href: "/client-dashboard", label: "My projects" },
+              { href: "/settings", label: "Settings" },
+            ].map((l) => (
+              <Link key={l.href} href={l.href}
+                className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
+                {l.label}
+              </Link>
+            ))}
+          </nav>
           <div className="flex items-center gap-2">
             <button className="btn-icon btn-ghost"><HugeiconsIcon icon={Notification01Icon} size={18} /></button>
             <Link href="/settings" className="btn-icon btn-ghost hidden sm:flex"><Settings size={18} /></Link>
@@ -154,14 +155,14 @@ export default function ClientDashboardPage() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             {[
-              { label: "Active projects", value: data?.stats.activeProjects ?? 0, icon: Package, color: "text-blue-600", bg: "bg-blue-50" },
-              { label: "Pending approvals", value: data?.stats.pendingApprovals ?? 0, icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
-              { label: "Completed", value: data?.stats.completedProjects ?? 0, icon: CheckCircle, color: "text-forest-600", bg: "bg-forest-50" },
-              { label: "Total invested", value: formatNaira(data?.stats.totalSpent ?? 0, { compact: true }), icon: Banknote, color: "text-purple-600", bg: "bg-purple-50" },
+              { label: "Active projects", value: data?.stats.activeProjects ?? 0, icon: (props: any) => <HugeiconsIcon icon={DeliveryBox02Icon} {...props} />, color: "text-blue-600", bg: "bg-blue-50" },
+              { label: "Pending approvals", value: data?.stats.pendingApprovals ?? 0, icon: (props: any) => <HugeiconsIcon icon={FolderClockIcon} {...props} />, color: "text-amber-600", bg: "bg-amber-50" },
+              { label: "Completed", value: data?.stats.completedProjects ?? 0, icon: (props: any) => <HugeiconsIcon icon={InboxCheckIcon} {...props} />, color: "text-forest-600", bg: "bg-forest-50" },
+              { label: "Total invested", value: formatNaira(data?.stats.totalSpent ?? 0, { compact: true }), icon: (props: any) => <HugeiconsIcon icon={Wallet02Icon} {...props} />, color: "text-purple-600", bg: "bg-purple-50" },
             ].map((s) => (
               <div key={s.label} className="stat-card">
                 <div className={`w-9 h-9 ${s.bg} rounded-xl flex items-center justify-center mb-3`}>
-                  <s.icon size={16} className={s.color} />
+                  <s.icon size={24} className={s.color} />
                 </div>
                 <p className="stat-value">{s.value}</p>
                 <p className="stat-label">{s.label}</p>
@@ -223,10 +224,10 @@ export default function ClientDashboardPage() {
               </h3>
               <div className="space-y-3">
                 {[
-                  { icon: Shield, text: "Funds held in Nomba virtual account — never sent to provider without your approval" },
+                  { icon: Shield, text: "Funds held in Nomba virtual account - never sent to provider without your approval" },
                   { icon: CheckCircle, text: "You approve each milestone before payment releases" },
-                  { icon: Clock, text: "72-hour review window — auto-approves if no action" },
-                  { icon: AlertTriangle, text: "Dispute any milestone — funds frozen during review" },
+                  { icon: Clock, text: "72-hour review window - auto-approves if no action" },
+                  { icon: AlertTriangle, text: "Dispute any milestone - funds frozen during review" },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="flex gap-2.5">
                     <Icon size={13} className="text-forest-500 flex-shrink-0 mt-0.5" />
@@ -300,7 +301,7 @@ function ClientEmptyState() {
   return (
     <div className="card p-10 text-center">
       <div className="w-14 h-14 bg-forest-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-        <Shield size={24} className="text-forest-400" />
+        <HugeiconsIcon icon={DropboxIcon} size={28} className="text-forest-400" />
       </div>
       <h3 className="font-semibold text-slate-900 mb-1">No projects yet</h3>
       <p className="text-slate-500 text-sm mb-2 max-w-xs mx-auto">
