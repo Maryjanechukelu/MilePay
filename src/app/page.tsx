@@ -10,6 +10,7 @@ import { SocialProofSection } from "@/components/landing/SocialProofSection";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { FinalCTASection } from "@/components/landing/FinalCTASection";
 import { Footer } from "@/components/landing/Footer";
+import ChatBubble from "@/components/landing/ChatBubble";
 
 export default function LandingPage() {
   return (
@@ -26,6 +27,7 @@ export default function LandingPage() {
       <FAQSection />
       <FinalCTASection />
       <Footer />
+      <ChatBubble />
     </main>
   );
 }

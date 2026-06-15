@@ -128,7 +128,7 @@ export function HeroSection() {
             initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="lg:block"
+            className="hidden lg:block"
           >
             <MilestoneWaterfall />
           </motion.div>
@@ -143,25 +143,25 @@ export function HeroSection() {
 
 function MilestoneWaterfall() {
   return (
-    <div className="relative max-w-sm mx-auto">
+    <div className="relative max-w-sm mx-auto bg-amber-500 border border-forest-600/30 rounded-3xl p-6 sm:p-8">
       {/* Project card */}
       <motion.div
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.5 }}
-        className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 mb-4"
+        className="bg-white/50 backdrop-blur-sm border border-forest-600/30 rounded-2xl p-5 mb-4"
       >
         <div className="flex items-start justify-between mb-3">
           <div>
-            <p className="text-xs text-gray-300 font-medium mb-1">Brand Identity Project</p>
-            <p className="text-white font-display font-bold text-xl">₦180,000</p>
+            <p className="text-xs text-forest-300 font-medium mb-1">Brand Identity Project</p>
+            <p className="font-display font-bold text-xl">₦180,000</p>
           </div>
-          <div className="bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-semibold px-2.5 py-1 rounded-full">
+          <div className="bg-white border border-forest-400/30 text-forest-300 text-xs font-semibold px-2.5 py-1 rounded-full">
             Active
           </div>
         </div>
         {/* Mini progress bar */}
-        <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-white/50 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: "33%" }}
@@ -174,7 +174,7 @@ function MilestoneWaterfall() {
 
       {/* Waterfall connector */}
       <div className="flex justify-center mb-2">
-        <div className="w-px h-6 bg-gradient-to-b from-white/20 to-amber-400/60" />
+        <div className="w-px h-6 bg-gradient-to-b from-forest-400/20 to-forest-400/60" />
       </div>
 
       {/* Milestones */}
@@ -187,17 +187,17 @@ function MilestoneWaterfall() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 + i * 0.15, duration: 0.4 }}
-              className="relative bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-4 flex items-center gap-4"
+              className="relative bg-white/50 backdrop-blur-sm border border-white/15 rounded-xl p-4 flex items-center gap-4"
             >
               {/* State indicator */}
               <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${cfg.bar}`} />
 
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-semibold truncate">{m.label}</p>
+                <p className="text-forest-500 text-sm font-semibold truncate">{m.label}</p>
               </div>
 
               <div className="flex items-center gap-2 flex-shrink-0">
-                <span className="text-white/80 text-sm font-display font-bold tabular-nums">
+                <span className="text-forest-500/80 text-sm font-display font-bold tabular-nums">
                   {m.amount}
                 </span>
                 <span className={`text-2xs font-semibold px-2 py-0.5 rounded-full border ${cfg.badge}`}>
@@ -219,14 +219,14 @@ function MilestoneWaterfall() {
         initial={{ opacity: 0, y: 12, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ delay: 1.2, duration: 0.5, type: "spring" }}
-        className="mt-5 bg-forest-600/40 border border-forest-400/40 rounded-xl p-3.5 flex items-center gap-3"
+        className="mt-5 bg-forest-600 border border-forest-400/40 rounded-xl p-3.5 flex items-center gap-3"
       >
-        <div className="w-8 h-8 bg-forest-500/30 rounded-lg flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 bg-amber-500/30 rounded-lg flex items-center justify-center flex-shrink-0">
           <Banknote size={16} className="text-amber-300" />
         </div>
         <div>
           <p className="text-white text-xs font-semibold">Milestone 1 approved</p>
-          <p className="text-gray-400 text-xs">₦39,200 released to Tunde ✓</p>
+          <p className="text-amber-400 text-xs">₦39,200 released to Tunde ✓</p>
         </div>
         <div className="ml-auto w-2 h-2 bg-forest-400 rounded-full animate-pulse-dot" />
       </motion.div>
@@ -236,7 +236,7 @@ function MilestoneWaterfall() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute -right-4 top-1/2 -translate-y-1/2 bg-amber-500 text-white text-2xs font-bold px-2.5 py-1.5 rounded-full shadow-lg rotate-12"
+        className="absolute right-3 lg:-right-4 top-1/2 -translate-y-1/2 bg-forest-800 text-amber-50 text-2xs font-bold px-2.5 py-1.5 rounded-full shadow-lg rotate-12 border border-forest-400"
       >
         2% platform fee
       </motion.div>

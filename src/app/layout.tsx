@@ -19,7 +19,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "MilePay — Get paid as you deliver",
+    default: "MilePay - Get paid as you deliver",
     template: "%s | MilePay",
   },
   description:
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     locale: "en_NG",
     url: "https://milepay.ng",
     siteName: "MilePay",
-    title: "MilePay — Get paid as you deliver",
+    title: "MilePay - Get paid as you deliver",
     description:
       "Milestone-based payment protection for Nigerian service providers and their clients.",
     images: [
@@ -47,13 +47,13 @@ export const metadata: Metadata = {
         url: "https://milepay.ng/og-image.png",
         width: 1200,
         height: 630,
-        alt: "MilePay — Milestone Payment Platform",
+        alt: "MilePay - Milestone Payment Platform",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "MilePay — Get paid as you deliver",
+    title: "MilePay - Get paid as you deliver",
     description:
       "Milestone-based payment protection for Nigerian service providers.",
     images: ["https://milepay.ng/og-image.png"],

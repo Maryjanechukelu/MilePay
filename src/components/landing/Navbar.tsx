@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -35,12 +36,12 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-              <span className="text-amber-400 font-display font-extrabold text-sm">M</span>
+            <div className="w-full h-14 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+              <Image src="/bg-colored.png" alt="MilePay" width={150} height={100} />
             </div>
-            <span className="font-display font-bold text-lg text-forest-900 tracking-tight">
+            {/* <span className="font-display font-bold text-lg text-forest-900 tracking-tight">
               MilePay
-            </span>
+            </span> */}
           </Link>
 
           {/* Desktop nav */}
@@ -61,7 +62,7 @@ export function Navbar() {
             <Link href="/login" className="btn-ghost text-sm text-slate-400 hover:bg-slate-100 transition-colors">
               Sign in
             </Link>
-            <Link href="/register" className="btn-primary btn-sm">
+            <Link href="/register" className="btn-secondary btn-sm">
               Get started free
             </Link>
           </div>

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +12,8 @@ import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import type { AuthResponse } from "@/types";
 import { cn } from "@/lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { LoginSquare01Icon, IdVerifiedIcon, NewOfficeIcon } from "@hugeicons/core-free-icons";
 
 function RegisterForm() {
   const router = useRouter();
@@ -54,14 +57,13 @@ function RegisterForm() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-lg">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-9 h-9 bg-forest-900 rounded-xl flex items-center justify-center">
-              <span className="text-amber-400 font-display font-extrabold">M</span>
+    <div className="min-h-screen bg-cream flex items-center justify-center px-4 py-2 pb-12 my-0!">
+      <div className="w-full max-w-xl">
+        <div className="text-center mb-0!">
+          <Link href="/" className="flex items-center">
+            <div className="w-full flex items-center justify-center">
+              <Image src="/bg-main.png" alt="MilePay" width={200} height={0} className="object-contain mb-0!" />
             </div>
-            <span className="font-display font-bold text-xl text-forest-900">MilePay</span>
           </Link>
         </div>
 
@@ -72,8 +74,8 @@ function RegisterForm() {
           {/* Role selector */}
           <div className="grid grid-cols-2 gap-3 mb-6">
             {([
-              { value: "provider", label: "I provide services", icon: Briefcase, sub: "Freelancer, tutor, consultant…" },
-              { value: "client",   label: "I hire services",    icon: User,      sub: "Business owner, individual…"  },
+              { value: "provider", label: "I provide services", icon: (props: any) => <HugeiconsIcon icon={IdVerifiedIcon} {...props} />, sub: "Freelancer, tutor, consultant…" },
+              { value: "client", label: "I hire services", icon: (props: any) => <HugeiconsIcon icon={NewOfficeIcon} {...props} />, sub: "Business owner, individual…" },
             ] as const).map((r) => (
               <button
                 key={r.value}
@@ -86,36 +88,37 @@ function RegisterForm() {
                     : "border-slate-200 hover:border-slate-300 bg-white"
                 )}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex flex-row items-center gap-2">
                   <r.icon
-                  size={15}
-                  className={selectedRole === r.value ? "text-forest-700 mb-1" : "text-slate-400 mb-1"}
-                />
-                 <p className={cn("text-xs font-bold mb-0.5 leading-tight",
-                  selectedRole === r.value ? "text-forest-900" : "text-slate-700"
-                )}>
-                  {r.label}
-                </p>
+                    size={18}
+                    className={selectedRole === r.value ? "text-forest-700 mb-1" : "text-slate-400 mb-1"}
+                  />
+                  <p className={cn("text-xs font-bold mb-0.5 leading-tight whitespace-nowra",
+                    selectedRole === r.value ? "text-forest-900" : "text-slate-700"
+                  )}>
+                    {r.label}
+                  </p>
                 </div>
-                <p className="text-xs text-slate-400 leading-tight">{r.sub}</p>
-               
+                <p className="text-xs text-slate-400 leading-tight hidde sm:bloc">{r.sub}</p>
+
               </button>
             ))}
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label className="field-label">Full name</label>
-              <input {...register("name")} className="field-input" placeholder="Chiamaka Osei" autoComplete="name" />
-              {errors.name && <p className="field-error">{errors.name.message}</p>}
-            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="field-label">Full name</label>
+                <input {...register("name")} className="field-input" placeholder="Chiamaka Osei" autoComplete="name" />
+                {errors.name && <p className="field-error">{errors.name.message}</p>}
+              </div>
 
-            <div>
-              <label className="field-label">Email address</label>
-              <input type="email" {...register("email")} className="field-input" placeholder="you@example.com" autoComplete="email" />
-              {errors.email && <p className="field-error">{errors.email.message}</p>}
+              <div>
+                <label className="field-label">Email address</label>
+                <input type="email" {...register("email")} className="field-input" placeholder="you@example.com" autoComplete="email" />
+                {errors.email && <p className="field-error">{errors.email.message}</p>}
+              </div>
             </div>
-
             <div>
               <label className="field-label">Phone number</label>
               <input type="tel" {...register("phone")} className="field-input" placeholder="08012345678" autoComplete="tel" />
@@ -170,7 +173,7 @@ function RegisterForm() {
                   Creating account…
                 </span>
               ) : (
-                <>Create account <ArrowRight size={16} /></>
+                <>Create account <HugeiconsIcon icon={LoginSquare01Icon} size={16} /></>
               )}
             </button>
           </form>

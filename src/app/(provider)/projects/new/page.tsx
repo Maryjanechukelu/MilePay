@@ -114,7 +114,7 @@ export default function CreateProjectPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <div className="bg-white border-b border-slate-100">
+      <div className="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div className="container-wide flex items-center h-14 gap-4">
           <Link href="/dashboard" className="btn-ghost btn-sm gap-1.5">
             <ArrowLeft size={15} /> Dashboard

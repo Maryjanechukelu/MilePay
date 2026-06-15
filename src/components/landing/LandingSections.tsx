@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import {
@@ -8,7 +9,7 @@ import {
   FileText, RefreshCw, Building2, Phone
 } from "lucide-react";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { FileAddIcon, SharedDriveIcon, WalletAdd01Icon, Payment02Icon, WorkUpdateIcon, ShapeCollectionIcon, IdVerifiedIcon, UserSwitchIcon, NewOfficeIcon, CheckmarkSquare02Icon, LockedIcon, ValidationApprovalIcon, TeamviewerIcon, MoneyLockIcon, ArrowRight02Icon, UserAiIcon} from '@hugeicons/core-free-icons'
+import { FileAddIcon, SharedDriveIcon, WalletAdd01Icon, Payment02Icon, WorkUpdateIcon, ShapeCollectionIcon, IdVerifiedIcon, UserSwitchIcon, NewOfficeIcon, CheckmarkSquare02Icon, LockedIcon, ValidationApprovalIcon, TeamviewerIcon, MoneyLockIcon, ArrowRight02Icon, UserAiIcon } from '@hugeicons/core-free-icons'
 import { formatNaira } from "@/lib/utils";
 
 // ─── Fade-up animation helper ─────────────────────────────────────
@@ -738,10 +739,9 @@ export function Footer() {
         <div className="grid sm:grid-cols-4 gap-8 mb-10">
           <div className="sm:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-forest-800 rounded-lg flex items-center justify-center">
-                <span className="text-amber-400 font-display font-extrabold text-xs">M</span>
+              <div className="w-full h-14 flex items-center shadow-sm group-hover:bg-forest-800 transition-colors">
+                <Image src="/bg-main.png" alt="MilePay" width={150} height={150} />
               </div>
-              <span className="font-display font-bold text-white">MilePay</span>
             </div>
             <p className="text-sm leading-relaxed max-w-xs">
               Milestone-based payment infrastructure for Nigerian service providers and their clients.

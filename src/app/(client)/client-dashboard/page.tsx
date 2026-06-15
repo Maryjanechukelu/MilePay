@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Shield, Clock, CheckCircle, AlertTriangle, ChevronRight,
-  LogOut, Bell, Settings, Banknote, Package
+  LogOut, Bell, Settings, Banknote, Package, Menu, X
 } from "lucide-react";
 import { dashboardApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
@@ -14,12 +15,15 @@ import {
   getMilestoneProgress, getInitials, cn
 } from "@/lib/utils";
 import type { ClientDashboard, Project } from "@/types";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Notification01Icon } from "@hugeicons/core-free-icons";
 
 export default function ClientDashboardPage() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
   const [data, setData] = useState<ClientDashboard | null>(null);
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     dashboardApi.client()
@@ -27,6 +31,12 @@ export default function ClientDashboardPage() {
       .catch(() => toast.error("Could not load dashboard"))
       .finally(() => setLoading(false));
   }, []);
+
+
+  function handleLogout() {
+    logout();
+    router.push("/");
+  }
 
   const profile = user?.profile as { fullName?: string } | undefined;
   const displayName = profile?.fullName ?? user?.name ?? "Client";
@@ -37,11 +47,20 @@ export default function ClientDashboardPage() {
       <header className="bg-white border-b border-slate-100 sticky top-0 z-40">
         <div className="container-wide flex items-center justify-between h-14">
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-forest-900 rounded-lg flex items-center justify-center">
-                <span className="text-amber-400 font-display font-extrabold text-xs">M</span>
+            {/* Mobile nav toggle */}
+            <div className="sm:hidden">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-2 rounded-lg border border-slate-200"
+                aria-label="Toggle navigation"
+              >
+                {menuOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
+            </div>
+            <Link href="/" className="hidden sm:flex items-center gap-2">
+              <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+                <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} />
               </div>
-              <span className="font-display font-bold text-forest-900">MilePay</span>
             </Link>
             <nav className="hidden sm:flex items-center gap-1">
               {[
@@ -56,8 +75,8 @@ export default function ClientDashboardPage() {
             </nav>
           </div>
           <div className="flex items-center gap-2">
-            <button className="btn-icon btn-ghost"><Bell size={18} /></button>
-            <Link href="/settings" className="btn-icon btn-ghost"><Settings size={18} /></Link>
+            <button className="btn-icon btn-ghost"><HugeiconsIcon icon={Notification01Icon} size={18} /></button>
+            <Link href="/settings" className="btn-icon btn-ghost hidden sm:flex"><Settings size={18} /></Link>
             <div className="w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
               {getInitials(displayName)}
             </div>
@@ -66,6 +85,51 @@ export default function ClientDashboardPage() {
             </button>
           </div>
         </div>
+        {/* Mobile side drawer */}
+        {menuOpen && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-40 bg-black/40"
+              onClick={() => setMenuOpen(false)}
+              aria-hidden
+            />
+            {/* Drawer */}
+            <aside className="fixed inset-y-0 left-0 z-50 w-64 max-w-[85%] bg-white shadow-xl border-r border-slate-100 transform transition-transform duration-300">
+              <div className="flex items-center justify-between p-4 border-b border-slate-100">
+                <div className="font-semibold text-sm">
+                  <Link href="/" className="sm:hidden items-center gap-2">
+                    <div className="w-full h-10 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+                      <Image src="/logo-icon.png" alt="MilePay" width={40} height={32} />
+                    </div>
+                  </Link>
+                </div>
+                <button onClick={() => setMenuOpen(false)} className="p-2 rounded-md">
+                  <X size={18} />
+                </button>
+              </div>
+              <nav className="p-4 space-y-1">
+                {[
+                  { href: "/client-dashboard", label: "My projects" },
+                  { href: "/settings", label: "Settings" },
+                ].map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </nav>
+              <div className="p-4 border-t border-slate-100">
+                <Link href="/settings" className="block px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">Settings</Link>
+                <button onClick={handleLogout} className="flex mt-3 w-full btn-primary">Sign out</button>
+              </div>
+            </aside>
+          </>
+        )}
       </header>
 
       <main className="container-wide py-8">
@@ -90,10 +154,10 @@ export default function ClientDashboardPage() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             {[
-              { label: "Active projects",    value: data?.stats.activeProjects ?? 0,     icon: Package,       color: "text-blue-600",   bg: "bg-blue-50" },
-              { label: "Pending approvals",  value: data?.stats.pendingApprovals ?? 0,   icon: Clock,         color: "text-amber-600",  bg: "bg-amber-50" },
-              { label: "Completed",          value: data?.stats.completedProjects ?? 0,  icon: CheckCircle,   color: "text-forest-600", bg: "bg-forest-50" },
-              { label: "Total invested",     value: formatNaira(data?.stats.totalSpent ?? 0, { compact: true }), icon: Banknote, color: "text-purple-600", bg: "bg-purple-50" },
+              { label: "Active projects", value: data?.stats.activeProjects ?? 0, icon: Package, color: "text-blue-600", bg: "bg-blue-50" },
+              { label: "Pending approvals", value: data?.stats.pendingApprovals ?? 0, icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
+              { label: "Completed", value: data?.stats.completedProjects ?? 0, icon: CheckCircle, color: "text-forest-600", bg: "bg-forest-50" },
+              { label: "Total invested", value: formatNaira(data?.stats.totalSpent ?? 0, { compact: true }), icon: Banknote, color: "text-purple-600", bg: "bg-purple-50" },
             ].map((s) => (
               <div key={s.label} className="stat-card">
                 <div className={`w-9 h-9 ${s.bg} rounded-xl flex items-center justify-center mb-3`}>
@@ -159,10 +223,10 @@ export default function ClientDashboardPage() {
               </h3>
               <div className="space-y-3">
                 {[
-                  { icon: Shield,       text: "Funds held in Nomba virtual account — never sent to provider without your approval" },
-                  { icon: CheckCircle,  text: "You approve each milestone before payment releases" },
-                  { icon: Clock,        text: "72-hour review window — auto-approves if no action" },
-                  { icon: AlertTriangle,text: "Dispute any milestone — funds frozen during review" },
+                  { icon: Shield, text: "Funds held in Nomba virtual account — never sent to provider without your approval" },
+                  { icon: CheckCircle, text: "You approve each milestone before payment releases" },
+                  { icon: Clock, text: "72-hour review window — auto-approves if no action" },
+                  { icon: AlertTriangle, text: "Dispute any milestone — funds frozen during review" },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="flex gap-2.5">
                     <Icon size={13} className="text-forest-500 flex-shrink-0 mt-0.5" />

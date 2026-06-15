@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { toast } from "sonner";
 import {
   Star, CheckCircle, MapPin, ExternalLink,
@@ -51,10 +52,9 @@ export default function PublicProfilePage() {
       <header className="bg-white border-b border-slate-100 sticky top-0 z-40">
         <div className="container-wide flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-forest-900 rounded-lg flex items-center justify-center">
-              <span className="text-amber-400 font-display font-extrabold text-xs">M</span>
+            <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+              <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} />
             </div>
-            <span className="font-display font-bold text-forest-900">MilePay</span>
           </Link>
           <Link href="/register?role=client" className="btn-primary btn-sm gap-2">
             Hire this provider <ArrowRight size={13} />
@@ -154,7 +154,7 @@ export default function PublicProfilePage() {
                 {[
                   `You review ${p.displayName?.split(" ")[0]}'s project proposal and milestone plan before committing.`,
                   "You fund the project once via bank transfer to a dedicated virtual account.",
-                  "Funds are locked — not released until you approve each milestone.",
+                  "Funds are locked - not released until you approve each milestone.",
                   "If anything isn't right, you can request revisions or raise a dispute.",
                 ].map((t, i) => (
                   <div key={i} className="flex gap-3">
@@ -176,7 +176,7 @@ export default function PublicProfilePage() {
                 Create a free client account. MilePay protects your payment from day one.
               </p>
               <Link href="/register?role=client" className="btn-primary btn-lg inline-flex items-center gap-2">
-                Get started — it&apos;s free <ArrowRight size={16} />
+                Get started - it&apos;s free <ArrowRight size={16} />
               </Link>
             </div>
           </div>

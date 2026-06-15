@@ -1,10 +1,13 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { LoginSquare01Icon } from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
 import { loginSchema, type LoginFormData } from "@/schemas";
 import { authApi } from "@/lib/api";
@@ -44,19 +47,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-cream flex items-centerr justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-9 h-9 bg-forest-900 rounded-xl flex items-center justify-center">
-              <span className="text-amber-400 font-display font-extrabold">M</span>
+        <div className="text-center mb-0!">
+          <Link href="/" className="flex items-center">
+            <div className="w-full flex items-center justify-center m-0!">
+              <Image src="/bg-main.png" alt="MilePay" width={200} height={0} className="object-contain mb-0!" />
             </div>
-            <span className="font-display font-bold text-xl text-forest-900">MilePay</span>
           </Link>
         </div>
 
-        <div className="card p-8 shadow-md">
+        <div className="card p-8 shadow-md my-0!">
           <h1 className="font-display text-2xl font-bold text-slate-900 mb-1">Welcome back</h1>
           <p className="text-slate-500 text-sm mb-7">Sign in to your MilePay account</p>
 
@@ -110,7 +112,7 @@ export default function LoginPage() {
                   Signing in…
                 </span>
               ) : (
-                <>Sign in <ArrowRight size={16} /></>
+                <>Sign in <HugeiconsIcon icon={LoginSquare01Icon} size={16} /></>
               )}
             </button>
           </form>
@@ -144,7 +146,7 @@ export default function LoginPage() {
                       toast.error("Demo login failed — check API connection");
                     }
                   }}
-                  className="text-xs border border-slate-200 rounded-lg py-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors"
+                  className="text-xs border border-slate-200 rounded-lg py-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors cursor-pointer"
                 >
                   {d.label}
                 </button>
