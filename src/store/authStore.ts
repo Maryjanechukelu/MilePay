@@ -25,6 +25,10 @@ export const useAuthStore = create<AuthState>()(
       setAuth: (user, token) => {
         if (typeof window !== "undefined") {
           localStorage.setItem("mp_token", token);
+          // Mirror to cookies so middleware (edge runtime) can read auth
+          // state — localStorage is not accessible there.
+          document.cookie = `mp_token=${token}; path=/; max-age=604800; SameSite=Lax`;
+          document.cookie = `mp_role=${user.role}; path=/; max-age=604800; SameSite=Lax`;
         }
         set({ user, token, isAuthenticated: true, isLoading: false });
       },
@@ -40,6 +44,8 @@ export const useAuthStore = create<AuthState>()(
         if (typeof window !== "undefined") {
           localStorage.removeItem("mp_token");
           localStorage.removeItem("mp_user");
+          document.cookie = "mp_token=; path=/; max-age=0";
+          document.cookie = "mp_role=; path=/; max-age=0";
         }
         set({ user: null, token: null, isAuthenticated: false });
       },
@@ -48,21 +54,15 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "mp_user",
-      storage: createJSONStorage(() => {
-        if (typeof window !== "undefined") return localStorage;
-
-        // Server-side / test-safe no-op storage that implements the full Storage interface
-        const noopStorage: Storage = {
-          getItem: (_: string) => null,
-          setItem: (_: string, __: string) => undefined,
-          removeItem: (_: string) => undefined,
-          clear: () => undefined,
-          key: (_: number) => null,
-          length: 0,
-        };
-
-        return noopStorage;
-      }),
+      storage: createJSONStorage(() =>
+        typeof window !== "undefined"
+          ? localStorage
+          : ({
+              getItem: () => null,
+              setItem: () => {},
+              removeItem: () => {},
+            } as unknown as Storage)
+      ),
       partialize: (state) => ({
         user: state.user,
         token: state.token,
