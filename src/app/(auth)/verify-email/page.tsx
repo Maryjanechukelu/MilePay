@@ -2,6 +2,7 @@
 import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { toast } from "sonner";
 import { Mail, CheckCircle, RefreshCw } from "lucide-react";
 import { authApi } from "@/lib/api";
@@ -57,12 +58,11 @@ function VerifyEmailContent() {
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center px-4">
       <div className="max-w-sm w-full">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-8 h-8 bg-forest-900 rounded-lg flex items-center justify-center">
-              <span className="text-amber-400 font-display font-extrabold text-sm">M</span>
+        <div className="mb-6">
+          <Link href="/" className="flex items-center">
+            <div className="w-full flex items-center justify-center">
+              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" />
             </div>
-            <span className="font-display font-bold text-lg text-forest-900">MilePay</span>
           </Link>
         </div>
 

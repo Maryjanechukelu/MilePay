@@ -2,6 +2,18 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { formatDistanceToNow, format, differenceInHours } from "date-fns";
 import type { ProjectState, MilestoneState, ServiceCategory } from "@/types";
+import {
+  CodeIcon,
+  PaintBoardIcon,
+  BookOpen02Icon,
+  Briefcase01Icon,
+  Camera01Icon,
+  PencilEdit02Icon,
+  VideoReplayIcon,
+  SparklesIcon,
+} from "@hugeicons/core-free-icons";
+// import type { IconSvgElement } from "@hugeicons/core-free-icons";
+
 
 // ─── Tailwind class merge ─────────────────────────────────────────
 export function cn(...inputs: ClassValue[]) {
@@ -89,16 +101,16 @@ export const CATEGORY_LABELS: Record<ServiceCategory, string> = {
   other:        "Other Services",
 };
 
-export const CATEGORY_ICONS: Record<ServiceCategory, string> = {
-  development:  "💻",
-  design:       "🎨",
-  tutoring:     "📚",
-  consulting:   "💼",
-  photography:  "📸",
-  writing:      "✍️",
-  video:        "🎬",
-  other:        "⚡",
-};
+export const CATEGORY_ICONS = {
+  development: CodeIcon,
+  design: PaintBoardIcon,
+  tutoring: BookOpen02Icon,
+  consulting: Briefcase01Icon,
+  photography: Camera01Icon,
+  writing: PencilEdit02Icon,
+  video: VideoReplayIcon,
+  other: SparklesIcon,
+} satisfies Record<ServiceCategory, typeof CodeIcon>;
 
 // ─── Nigerian states ──────────────────────────────────────────────
 export const NIGERIAN_STATES = [

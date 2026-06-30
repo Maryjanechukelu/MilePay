@@ -1,6 +1,7 @@
 "use client";
 import { useState, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -57,14 +58,13 @@ function ResetPasswordForm() {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center px-4">
         <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2">
-              <div className="w-9 h-9 bg-forest-900 rounded-xl flex items-center justify-center">
-                <span className="text-amber-400 font-display font-extrabold">M</span>
-              </div>
-              <span className="font-display font-bold text-xl text-forest-900">MilePay</span>
-            </Link>
-          </div>
+          <div className="mb-6">
+          <Link href="/" className="flex items-center">
+            <div className="w-full flex items-center justify-center">
+              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" />
+            </div>
+          </Link>
+        </div>
 
           <div className="card p-8 shadow-md text-center">
             <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-5">

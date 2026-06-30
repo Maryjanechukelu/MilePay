@@ -151,18 +151,23 @@ function ProfileTab({ isProvider }: { isProvider: boolean }) {
   async function handleSave() {
     setSaving(true);
     try {
-      const fd = new FormData();
       if (isProvider) {
-        fd.append("displayName", displayName);
-        fd.append("bio", bio);
-        fd.append("portfolioUrl", portfolioUrl);
-        fd.append("categories", JSON.stringify(selectedCats));
+        await onboardingApi.providerProfile({
+          displayName,
+          bio,
+          portfolioUrl: portfolioUrl || undefined,
+          categories: selectedCats,
+          city,
+          state,
+        });
       } else {
-        fd.append("fullName", displayName);
+        await onboardingApi.clientProfile({
+          fullName: displayName,
+          phone: (user?.phone as string) ?? "",
+          city,
+          state,
+        });
       }
-      fd.append("city", city);
-      fd.append("state", state);
-      await onboardingApi.providerProfile(fd);
       toast.success("Profile updated successfully!");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Could not update profile");

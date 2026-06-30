@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -39,14 +40,13 @@ export default function ForgotPasswordPage() {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center px-4">
         <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2">
-              <div className="w-9 h-9 bg-forest-900 rounded-xl flex items-center justify-center">
-                <span className="text-amber-400 font-display font-extrabold">M</span>
-              </div>
-              <span className="font-display font-bold text-xl text-forest-900">MilePay</span>
-            </Link>
-          </div>
+          <div className="mb-6">
+          <Link href="/" className="flex items-center">
+            <div className="w-full flex items-center justify-center">
+              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" />
+            </div>
+          </Link>
+        </div>
 
           <div className="card p-8 shadow-md text-center">
             <div className="w-16 h-16 bg-forest-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
@@ -89,12 +89,11 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen bg-cream flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-9 h-9 bg-forest-900 rounded-xl flex items-center justify-center">
-              <span className="text-amber-400 font-display font-extrabold">M</span>
+        <div className="mb-6">
+          <Link href="/" className="flex items-center">
+            <div className="w-full flex items-center justify-center">
+              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" />
             </div>
-            <span className="font-display font-bold text-xl text-forest-900">MilePay</span>
           </Link>
         </div>
 

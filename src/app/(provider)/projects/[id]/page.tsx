@@ -8,7 +8,7 @@ import {
   CheckCircle, Clock, Lock, AlertTriangle, Upload, ChevronLeft,
   ArrowRight, RefreshCw, FileText, Banknote, Copy, RotateCcw, X
 } from "lucide-react";
-import { projectApi, milestoneApi } from "@/lib/api";
+import { projectApi, milestoneApi, uploadApi } from "@/lib/api";
 import {
   formatNaira, formatDateTime, relativeTime, copyToClipboard,
   PROJECT_STATE_CONFIG, MILESTONE_STATE_CONFIG, getMilestoneProgress,
@@ -387,10 +387,8 @@ function SubmitMilestoneModal({
     if (text.length < 50) { toast.error("Delivery note must be at least 50 characters"); return; }
     setLoading(true);
     try {
-      const fd = new FormData();
-      fd.append("deliveryNote", text);
-      files.forEach((f) => fd.append("files", f));
-      await milestoneApi.submit(projectId, milestone.id, fd);
+      const deliveryFiles = files.length ? await uploadApi.uploadFiles(files) : undefined;
+      await milestoneApi.submit(projectId, milestone.id, { deliveryNote: text, deliveryFiles });
       toast.success("Milestone submitted! Your client has been notified.");
       onSuccess();
     } catch (err: unknown) {

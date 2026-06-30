@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Syne, Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const syne = Syne({
   subsets: ["latin"],
@@ -78,23 +79,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${syne.variable} ${inter.variable}`}>
-      <body className="font-sans bg-cream text-slate-800 antialiased">
-        {children}
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            classNames: {
-              toast:
-                "font-sans text-sm shadow-lg border border-slate-100 rounded-xl",
-              title: "font-semibold",
-              success: "border-forest-200 bg-forest-50 text-forest-900",
-              error: "border-red-200 bg-red-50 text-red-900",
-              warning: "border-amber-200 bg-amber-50 text-amber-900",
-            },
-          }}
-        />
-      </body>
-    </html>
+    <Providers>
+      <html lang="en" className={`${syne.variable} ${inter.variable}`}>
+        <body className="font-sans bg-cream text-slate-800 antialiased">
+          {children}
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              classNames: {
+                toast:
+                  "font-sans text-sm shadow-lg border border-slate-100 rounded-xl",
+                title: "font-semibold",
+                success: "border-forest-200 bg-forest-50 text-forest-900",
+                error: "border-red-200 bg-red-50 text-red-900",
+                warning: "border-amber-200 bg-amber-50 text-amber-900",
+              },
+            }}
+          />
+        </body>
+      </html>
+    </Providers>
   );
 }

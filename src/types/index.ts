@@ -292,8 +292,15 @@ export interface ApiError {
 }
 
 export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
   data: T;
-  message?: string;
+}
+
+export interface ApiSuccessResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
 }
 
 export interface PaginatedResponse<T> {

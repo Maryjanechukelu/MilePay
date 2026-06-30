@@ -1,7 +1,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
-import type { ApiError } from "@/types";
+import type { ApiError, Project, ProviderDashboard, ClientDashboard } from "@/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.milepay.ng/v1";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://milepay-blond.vercel.app/v1";
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -70,6 +70,36 @@ export const authApi = {
   me: () => api.get("/auth/me"),
 };
 
+// ─── File upload (pre-step before JSON submits below) ─────────────
+// The backend expects already-hosted URLs (idFrontUrl, deliveryFiles: [...],
+// etc.) rather than raw multipart files. This means files must be uploaded
+// to a storage provider FIRST, and only the resulting URL is sent in the
+// JSON body of the onboarding/milestone calls below.
+//
+// TODO: confirm the actual upload endpoint/provider with the backend dev
+// (e.g. a signed Cloudinary upload, or a dedicated POST /uploads route).
+// Until that's confirmed, this throws so callers fail loudly instead of
+// silently sending broken data.
+export const uploadApi = {
+  uploadFile: async (_file: File): Promise<string> => {
+    throw new Error(
+      "File upload endpoint not yet confirmed with backend. " +
+      "See TODO in uploadApi.uploadFile (src/lib/api.ts)."
+    );
+    // Once confirmed, this should look something like:
+    // const fd = new FormData();
+    // fd.append("file", _file);
+    // const res = await api.post("/uploads", fd, {
+    //   headers: { "Content-Type": "multipart/form-data" },
+    // });
+    // return res.data.data.url as string;
+  },
+
+  uploadFiles: async (files: File[]): Promise<string[]> => {
+    return Promise.all(files.map((f) => uploadApi.uploadFile(f)));
+  },
+};
+
 // ─── Onboarding endpoints ────────────────────────────────────────
 export const onboardingApi = {
   getBanks: () => api.get("/banks"),
@@ -77,15 +107,28 @@ export const onboardingApi = {
   resolveBank: (bankCode: string, accountNumber: string) =>
     api.post("/onboarding/provider/bank", { bankCode, accountNumber }),
 
-  providerProfile: (data: FormData) =>
-    api.post("/onboarding/provider/profile", data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+  // Step 1 — plain JSON, no file field per backend spec.
+  // Profile photo upload (if/when supported) happens via uploadApi first,
+  // and would need its own URL field added once the backend exposes one.
+  providerProfile: (data: {
+    displayName: string;
+    categories: string[];
+    bio: string;
+    portfolioUrl?: string;
+    city: string;
+    state: string;
+  }) => api.post("/onboarding/provider/profile", data),
 
-  providerIdentity: (data: FormData) =>
-    api.post("/onboarding/provider/identity", data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+  // Step 2 — JSON with already-uploaded URLs, not raw files.
+  // Call uploadApi.uploadFile() for idFront/idBack/selfie first, then pass
+  // the resulting URLs here.
+  providerIdentity: (data: {
+    idType: "nin" | "voters_card" | "passport" | "drivers_licence";
+    idNumber: string;
+    idFrontUrl: string;
+    idBackUrl?: string;
+    selfieUrl?: string;
+  }) => api.post("/onboarding/provider/identity", data),
 
   providerConfirmBank: (data: {
     bankCode: string; accountNumber: string;
@@ -128,10 +171,12 @@ export const projectApi = {
 
 // ─── Milestone endpoints ──────────────────────────────────────────
 export const milestoneApi = {
-  submit: (projectId: string, milestoneId: string, data: FormData) =>
-    api.post(`/projects/${projectId}/milestones/${milestoneId}/submit`, data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+  // JSON body — deliveryFiles are URLs uploaded beforehand via uploadApi.
+  submit: (
+    projectId: string,
+    milestoneId: string,
+    data: { deliveryNote: string; deliveryFiles?: string[] }
+  ) => api.post(`/projects/${projectId}/milestones/${milestoneId}/submit`, data),
 
   approve: (projectId: string, milestoneId: string) =>
     api.post(`/projects/${projectId}/milestones/${milestoneId}/approve`),
@@ -139,27 +184,129 @@ export const milestoneApi = {
   requestRevision: (projectId: string, milestoneId: string, notes: string) =>
     api.post(`/projects/${projectId}/milestones/${milestoneId}/request-revision`, { notes }),
 
-  dispute: (projectId: string, milestoneId: string, data: FormData) =>
-    api.post(`/projects/${projectId}/milestones/${milestoneId}/dispute`, data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+  // JSON body — evidenceFiles are URLs uploaded beforehand via uploadApi.
+  dispute: (
+    projectId: string,
+    milestoneId: string,
+    data: { reason: string; description: string; evidenceFiles?: string[] }
+  ) => api.post(`/projects/${projectId}/milestones/${milestoneId}/dispute`, data),
 
-  counterEvidence: (projectId: string, milestoneId: string, data: FormData) =>
-    api.post(`/projects/${projectId}/milestones/${milestoneId}/counter-evidence`, data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+  counterEvidence: (
+    projectId: string,
+    milestoneId: string,
+    data: { description: string; evidenceFiles?: string[] }
+  ) => api.post(`/projects/${projectId}/milestones/${milestoneId}/counter-evidence`, data),
+
+  // Was missing entirely — full milestone detail with submissions/evidence.
+  getDetail: (projectId: string, milestoneId: string) =>
+    api.get(`/projects/${projectId}/milestones/${milestoneId}`),
 };
 
-// ─── Dashboard endpoints ──────────────────────────────────────────
+// ─── Dashboard (derived client-side — no backend route exists) ───
+// The backend spec has no /dashboard/provider or /dashboard/client routes.
+// Both are reconstructed here from GET /projects?role=... so the existing
+// dashboard pages keep working without needing new backend endpoints.
 export const dashboardApi = {
-  provider: () => api.get("/dashboard/provider"),
-  client: () => api.get("/dashboard/client"),
+  provider: async () => {
+    const res = await api.get("/projects", { params: { role: "provider", limit: 100 } });
+    const projects = (res.data?.data ?? []) as Project[];
+
+    const activeProjects = projects.filter((p) => p.state === "ACTIVE").length;
+    const completedProjects = projects.filter((p) => p.state === "COMPLETED").length;
+
+    const totalEarned = projects
+      .flatMap((p) => p.milestones ?? [])
+      .filter((m) => m.state === "PAID")
+      .reduce((sum, m) => sum + m.amount, 0);
+
+    const pendingAmount = projects
+      .flatMap((p) => p.milestones ?? [])
+      .filter((m) => m.state === "APPROVED" || m.state === "APPROVED_PENDING_TRANSFER")
+      .reduce((sum, m) => sum + m.amount, 0);
+
+    const completionRates = projects.length
+      ? Math.round((completedProjects / projects.length) * 100)
+      : 0;
+
+    // Synthesize a "recent payments" list from paid milestones across
+    // all projects, most recent first — there's no dedicated payments
+    // endpoint for this, so it's derived from milestone data already
+    // present on each project.
+    const recentPayments = projects
+      .flatMap((p) =>
+        (p.milestones ?? [])
+          .filter((m) => m.state === "PAID" && m.paidAt)
+          .map((m) => ({
+            id: m.id,
+            projectId: p.id,
+            reference: m.id,
+            amount: m.amount,
+            currency: "NGN" as const,
+            type: "outbound" as const,
+            status: "success" as const,
+            narration: `${p.title} — ${m.title}`,
+            milestoneId: m.id,
+            createdAt: m.paidAt!,
+          }))
+      )
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 20);
+
+    const dashboard: ProviderDashboard = {
+      stats: {
+        totalProjects: projects.length,
+        activeProjects,
+        completedProjects,
+        totalEarned,
+        pendingAmount,
+        avgCompletionRate: completionRates,
+      },
+      projects,
+      recentPayments,
+    };
+
+    return { data: { data: dashboard } };
+  },
+
+  client: async () => {
+    const res = await api.get("/projects", { params: { role: "client", limit: 100 } });
+    const projects = (res.data?.data ?? []) as Project[];
+
+    const activeProjects = projects.filter((p) => p.state === "ACTIVE").length;
+    const completedProjects = projects.filter((p) => p.state === "COMPLETED").length;
+
+    const totalSpent = projects
+      .flatMap((p) => p.milestones ?? [])
+      .filter((m) => m.state === "PAID")
+      .reduce((sum, m) => sum + m.amount, 0);
+
+    const pendingApprovals = projects
+      .flatMap((p) => p.milestones ?? [])
+      .filter((m) => m.state === "SUBMITTED").length;
+
+    const dashboard: ClientDashboard = {
+      stats: {
+        totalProjects: projects.length,
+        activeProjects,
+        completedProjects,
+        totalSpent,
+        pendingApprovals,
+      },
+      projects,
+    };
+
+    return { data: { data: dashboard } };
+  },
 };
 
 // ─── Admin endpoints ──────────────────────────────────────────────
 export const adminApi = {
-  getDisputes: (params?: { page?: number; limit?: number }) =>
-    api.get("/admin/disputes", { params }),
+  // `outcome` filter added — was accepted by the backend but unused here.
+  getDisputes: (params?: {
+    outcome?: "PENDING" | "RELEASED_TO_PROVIDER" | "REFUNDED_TO_CLIENT";
+    page?: number;
+    limit?: number;
+  }) => api.get("/admin/disputes", { params }),
 
   resolveDispute: (
     id: string,
@@ -185,13 +332,27 @@ export const adminApi = {
 };
 
 // ─── Notifications endpoints ──────────────────────────────────────
+// Only GET /notifications is confirmed in the backend spec. The two
+// mark-read routes below are NOT in the spec — left in place since they're
+// low-risk no-ops if missing, but flagged here for backend confirmation.
 export const notificationApi = {
   list: (params?: { unread?: boolean; page?: number }) =>
     api.get("/notifications", { params }),
 
+  // TODO: confirm this route exists on the backend.
   markRead: (id: string) => api.post(`/notifications/${id}/read`),
 
+  // TODO: confirm this route exists on the backend.
   markAllRead: () => api.post("/notifications/read-all"),
+};
+
+// ─── Public provider profile ──────────────────────────────────────
+// TODO: no backend route for this exists anywhere in the provided spec.
+// There is no public "list/lookup provider by slug" endpoint, and nothing
+// else exposes provider data without auth. This will 404 until the
+// backend adds something like GET /providers/:slug.
+export const providerApi = {
+  getPublicProfile: (slug: string) => api.get(`/providers/${slug}`),
 };
 
 export default api;

@@ -1,5 +1,7 @@
 "use client";
 import { useState, useCallback } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,16 +15,17 @@ import {
   providerStep1Schema, providerStep2Schema, providerStep3Schema,
   type ProviderStep1Data, type ProviderStep2Data, type ProviderStep3Data,
 } from "@/schemas";
-import { onboardingApi } from "@/lib/api";
+import { onboardingApi, uploadApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import { NIGERIAN_STATES, CATEGORY_LABELS, CATEGORY_ICONS, cn } from "@/lib/utils";
 import type { ServiceCategory } from "@/types";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 const STEPS = [
-  { n: 1, label: "Profile",  icon: User },
+  { n: 1, label: "Profile", icon: User },
   { n: 2, label: "Identity", icon: ShieldCheck },
-  { n: 3, label: "Bank",     icon: Building2 },
-  { n: 4, label: "Terms",    icon: FileText },
+  { n: 3, label: "Bank", icon: Building2 },
+  { n: 4, label: "Terms", icon: FileText },
 ];
 
 export default function ProviderOnboardingPage() {
@@ -54,12 +57,11 @@ export default function ProviderOnboardingPage() {
       <div className="max-w-xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-forest-900 rounded-lg flex items-center justify-center">
-              <span className="text-amber-400 font-display font-extrabold text-sm">M</span>
+          <Link href="/" className="flex items-center">
+            <div className="w-full flex items-center justify-center m-0!">
+              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={200} className="object-contain mb-4" />
             </div>
-            <span className="font-display font-bold text-lg text-forest-900">MilePay</span>
-          </div>
+          </Link>
           <h1 className="font-display text-2xl font-bold text-slate-900">Set up your provider account</h1>
           <p className="text-slate-500 text-sm mt-1">Step {step} of 4 — takes about 3 minutes</p>
         </div>
@@ -140,12 +142,14 @@ function Step1({
 
   async function onSubmit(data: ProviderStep1Data) {
     try {
-      const fd = new FormData();
-      Object.entries(data).forEach(([k, v]) => {
-        if (k === "categories") fd.append(k, JSON.stringify(v));
-        else if (v) fd.append(k, String(v));
+      await onboardingApi.providerProfile({
+        displayName: data.displayName,
+        categories: data.categories,
+        bio: data.bio,
+        portfolioUrl: data.portfolioUrl || undefined,
+        city: data.city,
+        state: data.state,
       });
-      await onboardingApi.providerProfile(fd);
       onNext(data);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Could not save profile");
@@ -189,7 +193,17 @@ function Step1({
                   : "border-slate-200 text-slate-600 hover:border-slate-300"
               )}
             >
-              <div className="text-lg mb-1">{CATEGORY_ICONS[c]}</div>
+              <div className="flex justify-center mb-1">
+                <HugeiconsIcon
+                  icon={CATEGORY_ICONS[c]}
+                  size={22}
+                  className={
+                    selectedCats.includes(c)
+                      ? "text-forest-700"
+                      : "text-slate-500"
+                  }
+                />
+              </div>
               {CATEGORY_LABELS[c].split(" ")[0]}
             </button>
           ))}
@@ -266,28 +280,53 @@ function Step2({
   const [backFile, setBackFile] = useState<File | null>(null);
 
   const onDropFront = useCallback((files: File[]) => { if (files[0]) setFrontFile(files[0]); }, []);
-  const onDropBack  = useCallback((files: File[]) => { if (files[0]) setBackFile(files[0]); }, []);
+  const onDropBack = useCallback((files: File[]) => { if (files[0]) setBackFile(files[0]); }, []);
 
   const { getRootProps: getFrontProps, getInputProps: getFrontInput, isDragActive: frontDrag } =
     useDropzone({ onDrop: onDropFront, accept: { "image/*": [], "application/pdf": [] }, maxSize: 5 * 1024 * 1024, maxFiles: 1 });
   const { getRootProps: getBackProps, getInputProps: getBackInput, isDragActive: backDrag } =
     useDropzone({ onDrop: onDropBack, accept: { "image/*": [], "application/pdf": [] }, maxSize: 5 * 1024 * 1024, maxFiles: 1 });
 
+  // async function onSubmit(data: ProviderStep2Data) {
+  //   if (!frontFile) { toast.error("Upload the front of your ID"); return; }
+  //   try {
+  //     const idFrontUrl = await uploadApi.uploadFile(frontFile);
+  //     const idBackUrl = backFile ? await uploadApi.uploadFile(backFile) : undefined;
+  //     await onboardingApi.providerIdentity({
+  //       idType: data.idType,
+  //       idNumber: data.idNumber,
+  //       idFrontUrl,
+  //       idBackUrl,
+  //     });
+  //     onNext(data);
+  //   } catch (err: unknown) {
+  //     toast.error(err instanceof Error ? err.message : "Could not save identity info");
+  //   }
+  // }
+
   async function onSubmit(data: ProviderStep2Data) {
-    if (!frontFile) { toast.error("Upload the front of your ID"); return; }
-    const fd = new FormData();
-    fd.append("idType", data.idType);
-    fd.append("idNumber", data.idNumber);
-    fd.append("idFront", frontFile);
-    if (backFile) fd.append("idBack", backFile);
     try {
-      await onboardingApi.providerIdentity(fd);
+      // TODO: Replace these with actual upload URLs once the upload endpoint is ready
+      const idFrontUrl = "temp-id-front";
+      const idBackUrl = backFile ? "temp-id-back" : undefined;
+
+      await onboardingApi.providerIdentity({
+        idType: data.idType,
+        idNumber: data.idNumber,
+        idFrontUrl,
+        idBackUrl,
+      });
+
       onNext(data);
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Could not save identity info");
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "Could not save identity info"
+      );
     }
   }
-
+  
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div>

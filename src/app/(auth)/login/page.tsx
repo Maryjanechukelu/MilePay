@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { loginSchema, type LoginFormData } from "@/schemas";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
-import type { AuthResponse } from "@/types";
+import type { AuthResponse, ApiSuccessResponse, User } from "@/types";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -28,17 +28,27 @@ export default function LoginPage() {
   async function onSubmit(data: LoginFormData) {
     try {
       const res = await authApi.login(data);
-      const { token, user } = res.data as AuthResponse;
+      const response = res.data as ApiSuccessResponse<AuthResponse>;
+      const { token, user: rawUser } = res.data.data;
+
+      const user: User = {
+        ...rawUser,
+        emailVerified: rawUser.email_verified,
+        onboardingComplete: rawUser.onboarding_complete,
+      };
+
       setAuth(user, token);
 
       if (!user.emailVerified) {
         router.push("/verify-email");
         return;
       }
+
       if (!user.onboardingComplete) {
         router.push(`/onboarding/${user.role}`);
         return;
       }
+
       router.push("/dashboard");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Invalid email or password";
@@ -47,13 +57,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-centerr justify-center px-4 py-12">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-0!">
+        <div className="flex items-center justify-center mb-6">
           <Link href="/" className="flex items-center">
             <div className="w-full flex items-center justify-center m-0!">
-              <Image src="/bg-main.png" alt="MilePay" width={200} height={0} className="object-contain mb-0!" />
+              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" />
             </div>
           </Link>
         </div>
@@ -130,8 +140,8 @@ export default function LoginPage() {
             <div className="grid grid-cols-3 gap-2">
               {[
                 { label: "Provider", email: "provider@demo.ng", pw: "Demo1234" },
-                { label: "Client",   email: "client@demo.ng",   pw: "Demo1234" },
-                { label: "Admin",    email: "admin@demo.ng",    pw: "Demo1234" },
+                { label: "Client", email: "client@demo.ng", pw: "Demo1234" },
+                { label: "Admin", email: "admin@demo.ng", pw: "Demo1234" },
               ].map((d) => (
                 <button
                   key={d.label}

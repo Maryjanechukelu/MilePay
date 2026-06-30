@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { registerSchema, type RegisterFormData } from "@/schemas";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
-import type { AuthResponse } from "@/types";
+import type { AuthResponse, ApiSuccessResponse } from "@/types";
 import { cn } from "@/lib/utils";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { LoginSquare01Icon, IdVerifiedIcon, NewOfficeIcon } from "@hugeicons/core-free-icons";
@@ -46,7 +46,8 @@ function RegisterForm() {
         password: data.password,
         role: data.role,
       });
-      const { token, user } = res.data as AuthResponse;
+      const response = res.data as ApiSuccessResponse<AuthResponse>;
+      const { token, user } = response.data;
       setAuth(user, token);
       toast.success("Account created! Please verify your email.");
       router.push("/verify-email");
@@ -59,10 +60,10 @@ function RegisterForm() {
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center px-4 py-2 pb-12 my-0!">
       <div className="w-full max-w-xl">
-        <div className="text-center mb-0!">
+        <div className="mb-6">
           <Link href="/" className="flex items-center">
             <div className="w-full flex items-center justify-center">
-              <Image src="/bg-main.png" alt="MilePay" width={200} height={0} className="object-contain mb-0!" />
+              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" />
             </div>
           </Link>
         </div>

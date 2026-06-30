@@ -9,7 +9,7 @@ import {
   ArrowRight, RefreshCw, FileText, MessageSquare, Banknote,
   Shield, Copy, RotateCcw, X
 } from "lucide-react";
-import { projectApi, milestoneApi } from "@/lib/api";
+import { projectApi, milestoneApi, uploadApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import {
   formatNaira, formatDateTime, relativeTime, copyToClipboard,
@@ -492,10 +492,8 @@ function ActionModal({
     try {
       if (type === "submit") {
         if (text.length < 50) { toast.error("Delivery note must be at least 50 characters"); setLoading(false); return; }
-        const fd = new FormData();
-        fd.append("deliveryNote", text);
-        files.forEach((f) => fd.append("files", f));
-        await milestoneApi.submit(projectId, milestone.id, fd);
+        const deliveryFiles = files.length ? await uploadApi.uploadFiles(files) : undefined;
+        await milestoneApi.submit(projectId, milestone.id, { deliveryNote: text, deliveryFiles });
         toast.success("Milestone submitted! Your client has been notified.");
       } else if (type === "approve") {
         await milestoneApi.approve(projectId, milestone.id);
@@ -507,11 +505,8 @@ function ActionModal({
       } else if (type === "dispute") {
         if (!reason) { toast.error("Select a reason for the dispute"); setLoading(false); return; }
         if (text.length < 50) { toast.error("Describe the issue (min 50 chars)"); setLoading(false); return; }
-        const fd = new FormData();
-        fd.append("reason", reason);
-        fd.append("description", text);
-        files.forEach((f) => fd.append("evidence", f));
-        await milestoneApi.dispute(projectId, milestone.id, fd);
+        const evidenceFiles = files.length ? await uploadApi.uploadFiles(files) : undefined;
+        await milestoneApi.dispute(projectId, milestone.id, { reason, description: text, evidenceFiles });
         toast.success("Dispute raised. Funds are frozen. We'll review within 48 hours.");
       }
       onSuccess();

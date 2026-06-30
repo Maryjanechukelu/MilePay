@@ -23,14 +23,24 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       setAuth: (user, token) => {
+        if (!user || !token) {
+          console.error("setAuth called with invalid data", { user, token });
+          return;
+        }
+
         if (typeof window !== "undefined") {
           localStorage.setItem("mp_token", token);
-          // Mirror to cookies so middleware (edge runtime) can read auth
-          // state — localStorage is not accessible there.
+
           document.cookie = `mp_token=${token}; path=/; max-age=604800; SameSite=Lax`;
           document.cookie = `mp_role=${user.role}; path=/; max-age=604800; SameSite=Lax`;
         }
-        set({ user, token, isAuthenticated: true, isLoading: false });
+
+        set({
+          user,
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+        });
       },
 
       updateUser: (updates) => {
@@ -58,10 +68,10 @@ export const useAuthStore = create<AuthState>()(
         typeof window !== "undefined"
           ? localStorage
           : ({
-              getItem: () => null,
-              setItem: () => {},
-              removeItem: () => {},
-            } as unknown as Storage)
+            getItem: () => null,
+            setItem: () => { },
+            removeItem: () => { },
+          } as unknown as Storage)
       ),
       partialize: (state) => ({
         user: state.user,

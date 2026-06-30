@@ -57,8 +57,8 @@ export default function ProviderDashboardPage() {
               </button>
             </div>
             <Link href="/" className="hidden sm:flex items-center gap-2">
-              <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-                <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} />
+              <div className="w-full h-12 flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+                <Image src="/logo-main.jpg" alt="MilePay" width={120} height={50} />
               </div>
             </Link>
             
