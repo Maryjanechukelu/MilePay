@@ -8,6 +8,7 @@ import {
   Star, CheckCircle, MapPin, ExternalLink,
   Briefcase, Shield, ArrowRight
 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { api } from "@/lib/api";
 import { CATEGORY_LABELS, CATEGORY_ICONS, formatNaira } from "@/lib/utils";
 import type { ProviderProfile } from "@/types";
@@ -112,12 +113,15 @@ export default function PublicProfilePage() {
 
               {/* Categories */}
               <div className="flex flex-wrap gap-1.5 mb-4">
-                {p.categories?.map((c) => (
-                  <span key={c} className="badge badge-slate text-2xs gap-1">
-                    <span>{CATEGORY_ICONS[c]}</span>
-                    {CATEGORY_LABELS[c]}
-                  </span>
-                ))}
+                {p.categories?.map((c) => {
+                  const icon = CATEGORY_ICONS[c];
+                  return (
+                    <span key={c} className="badge badge-slate text-2xs gap-1">
+                      <span><HugeiconsIcon icon={icon} size={12} /></span>
+                      {CATEGORY_LABELS[c]}
+                    </span>
+                  );
+                })}
               </div>
 
               {p.portfolioUrl && (

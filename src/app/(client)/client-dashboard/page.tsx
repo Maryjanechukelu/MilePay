@@ -35,7 +35,7 @@ export default function ClientDashboardPage() {
 
   function handleLogout() {
     logout();
-    router.push("/");
+    router.push("/login");
   }
 
   const profile = user?.profile as { fullName?: string } | undefined;
@@ -81,7 +81,7 @@ export default function ClientDashboardPage() {
             <div className="w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
               {getInitials(displayName)}
             </div>
-            <button onClick={() => { logout(); router.push("/"); }} className="btn-ghost btn-sm hidden sm:flex items-center gap-1.5">
+            <button onClick={() => { logout(); router.push("/login"); }} className="btn-ghost btn-sm hidden sm:flex items-center gap-1.5">
               <LogOut size={14} /> Sign out
             </button>
           </div>

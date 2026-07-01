@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,10 +9,11 @@ import {
   ChevronLeft, User, Building2, Lock, Bell,
   Eye, EyeOff, CheckCircle, Search, Shield
 } from "lucide-react";
-import { onboardingApi } from "@/lib/api";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { onboardingApi, authApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import { NIGERIAN_STATES, CATEGORY_LABELS, CATEGORY_ICONS, cn } from "@/lib/utils";
-import type { ServiceCategory } from "@/types";
+import type { ServiceCategory, ProviderProfile } from "@/types";
 
 // ─── Schemas ──────────────────────────────────────────────────────
 const passwordSchema = z.object({
@@ -44,9 +45,25 @@ const TABS = [
 ];
 
 export default function SettingsPage() {
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const isProvider = user?.role === "provider";
   const [activeTab, setActiveTab] = useState("profile");
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  // Fetch the full user profile on mount so settings fields are pre-populated
+  // with what was saved during onboarding — the auth store only has the slim
+  // login response, not the full provider/client profile data.
+  useEffect(() => {
+    authApi.me()
+      .then((res) => {
+        const freshUser = res.data.data;
+        if (freshUser) updateUser(freshUser);
+      })
+      .catch(() => {
+        // Silently fall back to whatever is already in the store
+      })
+      .finally(() => setProfileLoading(false));
+  }, []);
 
   const visibleTabs = isProvider
     ? TABS
@@ -115,10 +132,31 @@ export default function SettingsPage() {
 
           {/* Tab content */}
           <div className="lg:col-span-3">
-            {activeTab === "profile" && <ProfileTab isProvider={isProvider} />}
-            {activeTab === "bank" && isProvider && <BankTab />}
-            {activeTab === "security" && <SecurityTab />}
-            {activeTab === "notifications" && <NotificationsTab />}
+            {profileLoading ? (
+              <div className="card p-6 space-y-4">
+                <div className="skeleton h-6 w-40 rounded" />
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="space-y-1.5">
+                    <div className="skeleton h-3 w-24 rounded" />
+                    <div className="skeleton h-10 w-full rounded-xl" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                {activeTab === "profile" && (
+                  <ProfileTab
+                    isProvider={isProvider}
+                    profile={user?.profile as ProviderProfile | undefined}
+                  />
+                )}
+                {activeTab === "bank" && isProvider && (
+                  <BankTab profile={user?.profile as ProviderProfile | undefined} />
+                )}
+                {activeTab === "security" && <SecurityTab />}
+                {activeTab === "notifications" && <NotificationsTab />}
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -127,19 +165,24 @@ export default function SettingsPage() {
 }
 
 // ─── Profile Tab ──────────────────────────────────────────────────
-function ProfileTab({ isProvider }: { isProvider: boolean }) {
+function ProfileTab({
+  isProvider,
+  profile,
+}: {
+  isProvider: boolean;
+  profile?: ProviderProfile;
+}) {
   const { user } = useAuthStore();
-  const profile = user?.profile as Record<string, unknown> | undefined;
   const [saving, setSaving] = useState(false);
   const [displayName, setDisplayName] = useState(
-    (profile?.displayName as string) ?? (profile?.fullName as string) ?? ""
+    profile?.displayName ?? (user?.name ?? "")
   );
-  const [bio, setBio] = useState((profile?.bio as string) ?? "");
-  const [city, setCity] = useState((profile?.city as string) ?? "");
-  const [state, setState] = useState((profile?.state as string) ?? "");
-  const [portfolioUrl, setPortfolioUrl] = useState((profile?.portfolioUrl as string) ?? "");
+  const [bio, setBio] = useState(profile?.bio ?? "");
+  const [city, setCity] = useState(profile?.city ?? "");
+  const [state, setState] = useState(profile?.state ?? "");
+  const [portfolioUrl, setPortfolioUrl] = useState(profile?.portfolioUrl ?? "");
   const [selectedCats, setSelectedCats] = useState<ServiceCategory[]>(
-    (profile?.categories as ServiceCategory[]) ?? []
+    profile?.categories ?? []
   );
 
   function toggleCat(c: ServiceCategory) {
@@ -212,22 +255,27 @@ function ProfileTab({ isProvider }: { isProvider: boolean }) {
             <div>
               <label className="field-label">Service categories</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {(Object.keys(CATEGORY_LABELS) as ServiceCategory[]).map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => toggleCat(c)}
-                    className={cn(
-                      "p-2.5 rounded-xl border text-xs font-medium text-center transition-all",
-                      selectedCats.includes(c)
-                        ? "border-forest-500 bg-forest-50 text-forest-800"
-                        : "border-slate-200 text-slate-600 hover:border-slate-300"
-                    )}
-                  >
-                    <div className="text-base mb-1">{CATEGORY_ICONS[c]}</div>
-                    {CATEGORY_LABELS[c].split(" ")[0]}
-                  </button>
-                ))}
+                {(Object.keys(CATEGORY_LABELS) as ServiceCategory[]).map((c) => {
+                  const icon = CATEGORY_ICONS[c];
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => toggleCat(c)}
+                      className={cn(
+                        "p-2.5 rounded-xl border text-xs font-medium text-center transition-all",
+                        selectedCats.includes(c)
+                          ? "border-forest-500 bg-forest-50 text-forest-800"
+                          : "border-slate-200 text-slate-600 hover:border-slate-300"
+                      )}
+                    >
+                      <div className="text-base mb-1">
+                        <HugeiconsIcon icon={icon} size={18} />
+                      </div>
+                      {CATEGORY_LABELS[c].split(" ")[0]}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -290,7 +338,9 @@ function ProfileTab({ isProvider }: { isProvider: boolean }) {
 }
 
 // ─── Bank Tab ─────────────────────────────────────────────────────
-function BankTab() {
+function BankTab({ profile }: { profile?: ProviderProfile }) {
+  const existingBank = profile?.bankAccount;
+
   const {
     register, handleSubmit, watch, setValue,
     formState: { errors, isSubmitting },
@@ -298,7 +348,7 @@ function BankTab() {
 
   const [banks, setBanks] = useState<{ code: string; name: string }[]>([]);
   const [resolving, setResolving] = useState(false);
-  const [resolvedName, setResolvedName] = useState("");
+  const [resolvedName, setResolvedName] = useState(existingBank?.accountName ?? "");
   const [confirmed, setConfirmed] = useState(false);
 
   const bankCode      = watch("bankCode");
@@ -351,6 +401,31 @@ function BankTab() {
       <p className="text-slate-500 text-sm mb-6">
         Milestone payouts go to this account. Changes apply to future payouts only — in-flight transfers use the previous account.
       </p>
+
+      {/* Current account on file */}
+      {existingBank && (
+        <div className="bg-forest-50 border border-forest-200 rounded-xl p-4 mb-6">
+          <p className="text-xs font-semibold text-forest-700 mb-2.5 flex items-center gap-1.5">
+            <CheckCircle size={12} /> Current payout account
+          </p>
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs">
+              <span className="text-slate-500">Bank</span>
+              <span className="font-semibold text-slate-800">{existingBank.bankName}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-slate-500">Account number</span>
+              <span className="font-semibold text-slate-800 font-mono tracking-wider">
+                {existingBank.accountNumber}
+              </span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-slate-500">Account name</span>
+              <span className="font-semibold text-slate-800">{existingBank.accountName}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex gap-3">
         <Building2 size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />

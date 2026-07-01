@@ -14,7 +14,7 @@ import { dashboardApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import {
   formatNaira, relativeTime, PROJECT_STATE_CONFIG,
-  MILESTONE_STATE_CONFIG, getMilestoneProgress, getInitials, cn
+  MILESTONE_STATE_CONFIG, getMilestoneProgress, getInitials, getGreeting, cn
 } from "@/lib/utils";
 import type { ProviderDashboard, Project } from "@/types";
 
@@ -34,7 +34,7 @@ export default function ProviderDashboardPage() {
 
   function handleLogout() {
     logout();
-    router.push("/");
+    router.push("/login");
   }
 
   const profile = user?.profile as { displayName?: string } | undefined;
@@ -141,7 +141,7 @@ export default function ProviderDashboardPage() {
         <div className="flex items-start justify-between mb-8">
           <div>
             <h1 className="font-display text-2xl font-bold text-slate-900">
-              Good day, {displayName.split(" ")[0]} 👋
+              {getGreeting()}, {displayName.split(" ")[0]} 👋
             </h1>
             <p className="text-slate-500 text-sm mt-0.5">Here&apos;s what&apos;s happening with your projects.</p>
           </div>
