@@ -63,7 +63,7 @@ export default function LoginPage() {
         <div className="flex items-center justify-center mb-6">
           <Link href="/" className="">
               <div className="w-full flex items-center justify-center m-0!">
-              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" style={{ width: "auto", height: "auto" }} />
+              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" style={{ width: "auto", height: "auto" }}  loading="eager" />
             </div>
           </Link>
         </div>

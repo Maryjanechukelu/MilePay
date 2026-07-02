@@ -70,7 +70,7 @@ export default function ProviderEarningsPage() {
             </div>
             <Link href="/" className="hidden sm:flex items-center gap-2">
                 <div className="w-full h-12 flex items-center justify-center shadow-sm">
-                <Image src="/logo-main.jpg" alt="MilePay" width={120} height={50} style={{ width: "auto", height: "auto" }} />
+                <Image src="/logo-main.jpg" alt="MilePay" width={120} height={50} style={{ width: "auto", height: "auto" }}  loading="eager" />
               </div>
             </Link>
           </div>

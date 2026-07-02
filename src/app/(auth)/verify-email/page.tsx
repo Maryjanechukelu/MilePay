@@ -61,7 +61,7 @@ function VerifyEmailContent() {
         <div className="mb-6">
           <Link href="/" className="flex items-center">
               <div className="w-full flex items-center justify-center">
-              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" style={{ width: "auto", height: "auto" }} />
+              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" style={{ width: "auto", height: "auto" }}  loading="eager" />
             </div>
           </Link>
         </div>
