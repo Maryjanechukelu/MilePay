@@ -16,7 +16,7 @@ export default function NotFoundPage() {
         <div className="container-wide flex items-center h-14">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-              <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} />
+              <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} loading="eager" />
             </div>
           </Link>
         </div>
@@ -34,7 +34,7 @@ export default function NotFoundPage() {
             {/* Overlay icon */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-20 h-20 bg-forest-900 rounded-3xl flex items-center justify-center shadow-lg">
-                <Image src="/logo-icon.png" alt="MilePay" width={40} height={32} />
+                <Image src="/logo-icon.png" alt="MilePay" width={40} height={32} style={{ width: "auto", height: "auto" }} />
               </div>
             </div>
           </div>

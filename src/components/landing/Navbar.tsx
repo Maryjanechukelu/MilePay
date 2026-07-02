@@ -36,8 +36,8 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-full h-14 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-              <Image src="/bg-colored.png" alt="MilePay" width={150} height={100} />
+              <div className="w-full h-14 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+              <Image src="/bg-colored.png" alt="MilePay" width={150} height={100} loading="eager" style={{ width: "auto", height: "auto" }} />
             </div>
             {/* <span className="font-display font-bold text-lg text-forest-900 tracking-tight">
               MilePay

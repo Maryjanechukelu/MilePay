@@ -54,7 +54,7 @@ export default function PublicProfilePage() {
         <div className="container-wide flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-              <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} />
+              <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} style={{ width: "auto", height: "auto" }} />
             </div>
           </Link>
           <Link href="/register?role=client" className="btn-primary btn-sm gap-2">

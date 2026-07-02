@@ -58,8 +58,8 @@ export default function ClientDashboardPage() {
               </button>
             </div>
             <Link href="/" className="hidden sm:flex items-center gap-2">
-              <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-                <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} loading="eager" />
+                <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+                <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} loading="eager" style={{ width: "auto", height: "auto" }} />
               </div>
             </Link>
           </div>
@@ -101,7 +101,7 @@ export default function ClientDashboardPage() {
                 <div className="font-semibold text-sm">
                   <Link href="/" className="sm:hidden items-center gap-2">
                     <div className="w-full h-10 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-                      <Image src="/logo-icon.png" alt="MilePay" width={40} height={32} loading="eager" />
+                      <Image src="/logo-icon.png" alt="MilePay" width={40} height={32} loading="eager" style={{ width: "auto", height: "auto" }} />
                     </div>
                   </Link>
                 </div>
@@ -304,7 +304,7 @@ function ClientEmptyState() {
         <HugeiconsIcon icon={DropboxIcon} size={28} className="text-forest-400" />
       </div>
       <h3 className="font-semibold text-slate-900 mb-1">No projects yet</h3>
-      <p className="text-slate-500 text-sm mb-2 max-w-xs mx-auto">
+      <p className="text-slate-500 text-sm mb-2 max-w-sm mx-auto leading-relaxed">
         When a service provider shares a MilePay project link with you, it will appear here after you accept it.
       </p>
       <p className="text-xs text-slate-400">Ask your provider to send you a MilePay project link.</p>

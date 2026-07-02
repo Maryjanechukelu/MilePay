@@ -59,7 +59,7 @@ export default function ProviderOnboardingPage() {
         <div className="text-center mb-8">
           <Link href="/" className="flex items-center">
             <div className="w-full flex items-center justify-center m-0!">
-              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={200} className="object-contain mb-4" />
+              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={200} className="object-contain mb-4" style={{ width: "auto", height: "auto" }} />
             </div>
           </Link>
           <h1 className="font-display text-2xl font-bold text-slate-900">Set up your provider account</h1>
