@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { toast } from "sonner";
 import {
   Building2, Copy, CheckCircle, ArrowRight,
@@ -17,6 +18,7 @@ export default function PaymentInstructionsPage() {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [polling, setPolling] = useState(false);
+  const [provisioning, setProvisioning] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   useEffect(() => {
@@ -45,9 +47,20 @@ export default function PaymentInstructionsPage() {
   async function loadProject() {
     try {
       const res = await projectApi.get(params.id as string);
-      setProject(res.data.data);
-    } catch {
-      toast.error("Could not load project details");
+      const nextProject = res.data.data as Project;
+      setProject(nextProject);
+
+      if (!nextProject.virtualAccount) {
+        setProvisioning(true);
+        toast.loading("Preparing your virtual account…", { id: "virtual-account" });
+      } else {
+        setProvisioning(false);
+        toast.dismiss("virtual-account");
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Could not load project details";
+      toast.error(message);
+      setProvisioning(false);
     } finally {
       setLoading(false);
     }
@@ -100,10 +113,9 @@ export default function PaymentInstructionsPage() {
       <header className="bg-white border-b border-slate-100">
         <div className="container-wide flex items-center h-14">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-forest-900 rounded-lg flex items-center justify-center">
-              <span className="text-amber-400 font-display font-extrabold text-xs">M</span>
+            <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+              <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} loading="eager" />
             </div>
-            <span className="font-display font-bold text-forest-900">MilePay</span>
           </Link>
         </div>
       </header>
@@ -225,7 +237,19 @@ export default function PaymentInstructionsPage() {
           <div className="card p-6 mb-5 text-center">
             <div className="w-8 h-8 border-2 border-forest-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             <p className="text-sm text-slate-600">Provisioning your virtual account…</p>
-            <p className="text-xs text-slate-400 mt-1">This takes a few seconds</p>
+            <p className="text-xs text-slate-400 mt-1">This usually takes a few seconds.</p>
+            <button
+              onClick={() => {
+                setProvisioning(true);
+                toast.loading("Retrying virtual account setup…", { id: "virtual-account-retry" });
+                loadProject().finally(() => {
+                  toast.dismiss("virtual-account-retry");
+                });
+              }}
+              className="btn-ghost btn-sm mt-4 gap-2"
+            >
+              <RefreshCw size={12} /> Retry
+            </button>
           </div>
         )}
 

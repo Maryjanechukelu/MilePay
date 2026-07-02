@@ -22,40 +22,56 @@ export function cn(...inputs: ClassValue[]) {
 
 // ─── Currency formatting ─────────────────────────────────────────
 export function formatNaira(
-  amount: number,
+  amount: number | string | null | undefined,
   options?: { compact?: boolean; showDecimals?: boolean }
 ): string {
+  const numericAmount = Number(amount ?? 0);
+  if (!Number.isFinite(numericAmount)) return "₦0";
+
   if (options?.compact) {
-    if (amount >= 1_000_000) return `₦${(amount / 1_000_000).toFixed(1)}M`;
-    if (amount >= 1_000) return `₦${(amount / 1_000).toFixed(0)}k`;
-    return `₦${amount.toLocaleString("en-NG")}`;
+    if (numericAmount >= 1_000_000) return `₦${(numericAmount / 1_000_000).toFixed(1)}M`;
+    if (numericAmount >= 1_000) return `₦${(numericAmount / 1_000).toFixed(0)}k`;
+    return `₦${numericAmount.toLocaleString("en-NG")}`;
   }
+
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
     currency: "NGN",
     minimumFractionDigits: options?.showDecimals ? 2 : 0,
     maximumFractionDigits: options?.showDecimals ? 2 : 0,
-  }).format(amount);
+  }).format(numericAmount);
 }
 
 // ─── Date formatting ──────────────────────────────────────────────
-export function relativeTime(date: string | Date): string {
-  return formatDistanceToNow(new Date(date), { addSuffix: true });
+export function relativeTime(date: string | Date | null | undefined): string {
+  if (!date) return "—";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "—";
+  return formatDistanceToNow(d, { addSuffix: true });
 }
 
 export function formatDate(
-  date: string | Date,
+  date: string | Date | null | undefined,
   pattern = "d MMM yyyy"
 ): string {
-  return format(new Date(date), pattern);
+  if (!date) return "—";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "—";
+  return format(d, pattern);
 }
 
-export function formatDateTime(date: string | Date): string {
-  return format(new Date(date), "d MMM yyyy, h:mm a");
+export function formatDateTime(date: string | Date | null | undefined): string {
+  if (!date) return "—";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "—";
+  return format(d, "d MMM yyyy, h:mm a");
 }
 
-export function hoursUntil(date: string | Date): number {
-  return differenceInHours(new Date(date), new Date());
+export function hoursUntil(date: string | Date | null | undefined): number {
+  if (!date) return 0;
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return 0;
+  return differenceInHours(d, new Date());
 }
 
 // ─── State labels & colours ───────────────────────────────────────
@@ -63,42 +79,42 @@ export const PROJECT_STATE_CONFIG: Record<
   ProjectState,
   { label: string; badgeClass: string; dot: string }
 > = {
-  DRAFT:              { label: "Draft",            badgeClass: "badge-slate",  dot: "bg-slate-400" },
-  PENDING_ACCEPTANCE: { label: "Pending Acceptance",badgeClass: "badge-slate",  dot: "bg-slate-400" },
-  PENDING_PAYMENT:    { label: "Awaiting Payment",  badgeClass: "badge-amber",  dot: "bg-amber-500" },
-  PARTIALLY_PAID:     { label: "Partially Paid",    badgeClass: "badge-amber",  dot: "bg-amber-400" },
-  ACTIVE:             { label: "Active",            badgeClass: "badge-blue",   dot: "bg-blue-500"  },
-  COMPLETED:          { label: "Completed",         badgeClass: "badge-green",  dot: "bg-forest-500"},
-  DISPUTED:           { label: "Disputed",          badgeClass: "badge-red",    dot: "bg-red-500"   },
-  CANCELLED:          { label: "Cancelled",         badgeClass: "badge-slate",  dot: "bg-slate-400" },
-  REFUNDED:           { label: "Refunded",          badgeClass: "badge-purple", dot: "bg-purple-500"},
+  DRAFT: { label: "Draft", badgeClass: "badge-slate", dot: "bg-slate-400" },
+  PENDING_ACCEPTANCE: { label: "Pending Acceptance", badgeClass: "badge-slate", dot: "bg-slate-400" },
+  PENDING_PAYMENT: { label: "Awaiting Payment", badgeClass: "badge-amber", dot: "bg-amber-500" },
+  PARTIALLY_PAID: { label: "Partially Paid", badgeClass: "badge-amber", dot: "bg-amber-400" },
+  ACTIVE: { label: "Active", badgeClass: "badge-blue", dot: "bg-blue-500" },
+  COMPLETED: { label: "Completed", badgeClass: "badge-green", dot: "bg-forest-500" },
+  DISPUTED: { label: "Disputed", badgeClass: "badge-red", dot: "bg-red-500" },
+  CANCELLED: { label: "Cancelled", badgeClass: "badge-slate", dot: "bg-slate-400" },
+  REFUNDED: { label: "Refunded", badgeClass: "badge-purple", dot: "bg-purple-500" },
 };
 
 export const MILESTONE_STATE_CONFIG: Record<
   MilestoneState,
   { label: string; badgeClass: string }
 > = {
-  LOCKED:                    { label: "Locked",               badgeClass: "badge-slate"  },
-  IN_PROGRESS:               { label: "In Progress",          badgeClass: "badge-blue"   },
-  SUBMITTED:                 { label: "Submitted",            badgeClass: "badge-amber"  },
-  REVISION_REQUESTED:        { label: "Revision Requested",   badgeClass: "badge-amber"  },
-  APPROVED:                  { label: "Approved",             badgeClass: "badge-green"  },
-  APPROVED_PENDING_TRANSFER: { label: "Paying out…",          badgeClass: "badge-amber"  },
-  PAID:                      { label: "Paid",                 badgeClass: "badge-green"  },
-  DISPUTED:                  { label: "Disputed",             badgeClass: "badge-red"    },
-  REFUNDED:                  { label: "Refunded",             badgeClass: "badge-purple" },
+  LOCKED: { label: "Locked", badgeClass: "badge-slate" },
+  IN_PROGRESS: { label: "In Progress", badgeClass: "badge-blue" },
+  SUBMITTED: { label: "Submitted", badgeClass: "badge-amber" },
+  REVISION_REQUESTED: { label: "Revision Requested", badgeClass: "badge-amber" },
+  APPROVED: { label: "Approved", badgeClass: "badge-green" },
+  APPROVED_PENDING_TRANSFER: { label: "Paying out…", badgeClass: "badge-amber" },
+  PAID: { label: "Paid", badgeClass: "badge-green" },
+  DISPUTED: { label: "Disputed", badgeClass: "badge-red" },
+  REFUNDED: { label: "Refunded", badgeClass: "badge-purple" },
 };
 
 // ─── Service categories ───────────────────────────────────────────
 export const CATEGORY_LABELS: Record<ServiceCategory, string> = {
-  development:  "Software Development",
-  design:       "Design & Branding",
-  tutoring:     "Tutoring & Teaching",
-  consulting:   "Consulting",
-  photography:  "Photography & Video",
-  writing:      "Writing & Content",
-  video:        "Video Production",
-  other:        "Other Services",
+  development: "Software Development",
+  design: "Design & Branding",
+  tutoring: "Tutoring & Teaching",
+  consulting: "Consulting",
+  photography: "Photography & Video",
+  writing: "Writing & Content",
+  video: "Video Production",
+  other: "Other Services",
 };
 
 export const CATEGORY_ICONS = {
@@ -167,7 +183,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
 }
 
 // ─── Milestone progress ──────────────────────────────────────────
-export function getMilestoneProgress(milestones: { state: MilestoneState }[]): {
+export function getMilestoneProgress(milestones: { state: MilestoneState }[] = []): {
   completed: number;
   total: number;
   percent: number;
@@ -176,7 +192,6 @@ export function getMilestoneProgress(milestones: { state: MilestoneState }[]): {
   const completed = milestones.filter((m) => m.state === "PAID").length;
   return { completed, total, percent: total > 0 ? Math.round((completed / total) * 100) : 0 };
 }
-
 // ─── Phone formatting ─────────────────────────────────────────────
 export function formatNigerianPhone(phone: string): string {
   const cleaned = phone.replace(/\D/g, "");
@@ -187,10 +202,11 @@ export function formatNigerianPhone(phone: string): string {
 
 // ─── Share URL ────────────────────────────────────────────────────
 export function getProjectShareUrl(projectId: string): string {
-  if (typeof window !== "undefined") {
-    return `${window.location.origin}/project/${projectId}`;
-  }
-  return `https://milepay.ng/project/${projectId}`;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ||
+    (typeof window !== "undefined" ? window.location.origin : "https://milepay.ng");
+
+  const normalizedBaseUrl = appUrl.replace(/\/$/, "");
+  return `${normalizedBaseUrl}/project/${projectId}`;
 }
 
 export function getGreeting() {

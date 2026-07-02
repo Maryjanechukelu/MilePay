@@ -145,6 +145,22 @@ export const onboardingApi = {
 };
 
 // ─── Project endpoints ────────────────────────────────────────────
+function mapProject(raw: any): Project {
+  return {
+    ...raw,
+    totalAmount: Number(raw.total_amount ?? raw.totalAmount ?? 0),
+    amountPaid: Number(raw.amount_paid ?? raw.amountPaid ?? 0),
+    createdAt: raw.created_at ?? raw.createdAt,
+    updatedAt: raw.updated_at ?? raw.updatedAt,
+    clientEmail: raw.client_email ?? raw.clientEmail,
+    shareUrl: raw.share_url ?? raw.shareUrl,
+    milestones: (raw.milestones ?? []).map((m: any) => ({
+      ...m,
+      amount: Number(m.amount ?? 0),
+    })),
+  };
+}
+
 export const projectApi = {
   create: (data: {
     title: string; description: string; clientEmail?: string;
@@ -152,20 +168,45 @@ export const projectApi = {
     milestones: { title: string; description: string; deliverable: string; amount: number }[];
   }) => api.post("/projects", data),
 
-  get: (id: string) => api.get(`/projects/${id}`),
+  get: async (id: string) => {
+    const res = await api.get(`/projects/${id}`);
+    return {
+      ...res,
+      data: {
+        ...res.data,
+        data: mapProject(res.data?.data ?? {}),
+      },
+    };
+  },
 
-  getPublic: (id: string) => api.get(`/projects/${id}/public`),
+  getPublic: async (id: string) => {
+    const res = await api.get(`/projects/${id}/public`);
+    return {
+      ...res,
+      data: {
+        ...res.data,
+        data: mapProject(res.data?.data ?? {}),
+      },
+    };
+  },
 
-  list: (params?: { role?: string; state?: string; page?: number; limit?: number }) =>
-    api.get("/projects", { params }),
+  // Returns normalized projects + pagination meta, matching the actual
+  // { success, data: { projects, total, page, limit, pages } } shape.
+  list: async (params?: { role?: string; state?: string; page?: number; limit?: number }) => {
+    const res = await api.get("/projects", { params });
+    const raw = res.data?.data ?? {};
+    return {
+      projects: (raw.projects ?? []).map(mapProject) as Project[],
+      total: raw.total ?? 0,
+      page: raw.page ?? 1,
+      limit: raw.limit ?? 20,
+      pages: raw.pages ?? 1,
+    };
+  },
 
   accept: (id: string) => api.post(`/projects/${id}/accept`),
-
-  cancel: (id: string, reason: string) =>
-    api.post(`/projects/${id}/cancel`, { reason }),
-
+  cancel: (id: string, reason: string) => api.post(`/projects/${id}/cancel`, { reason }),
   getAuditLog: (id: string) => api.get(`/projects/${id}/audit`),
-
   getPayments: (id: string) => api.get(`/projects/${id}/payments`),
 };
 
@@ -208,8 +249,14 @@ export const milestoneApi = {
 // dashboard pages keep working without needing new backend endpoints.
 export const dashboardApi = {
   provider: async () => {
-    const res = await api.get("/projects", { params: { role: "provider", limit: 100 } });
-    const projects = (res.data?.data ?? []) as Project[];
+    const { projects } = await projectApi.list({ role: "provider", limit: 100 });
+    // const projects = ((res.data?.data?.projects ?? []) as any[]).map((p) => ({
+    //   ...p,
+    //   totalAmount: Number(p.total_amount ?? 0),
+    //   createdAt: p.created_at,
+    //   updatedAt: p.updated_at,
+    //   milestones: p.milestones ?? [],
+    // })) as Project[];
 
     const activeProjects = projects.filter((p) => p.state === "ACTIVE").length;
     const completedProjects = projects.filter((p) => p.state === "COMPLETED").length;
@@ -269,8 +316,14 @@ export const dashboardApi = {
   },
 
   client: async () => {
-    const res = await api.get("/projects", { params: { role: "client", limit: 100 } });
-    const projects = (res.data?.data ?? []) as Project[];
+    const { projects } = await projectApi.list({ role: "provider", limit: 100 });
+    // const projects = ((res.data?.data?.projects ?? []) as any[]).map((p) => ({
+    //   ...p,
+    //   totalAmount: Number(p.total_amount ?? 0),
+    //   createdAt: p.created_at,
+    //   updatedAt: p.updated_at,
+    //   milestones: p.milestones ?? [],
+    // })) as Project[];
 
     const activeProjects = projects.filter((p) => p.state === "ACTIVE").length;
     const completedProjects = projects.filter((p) => p.state === "COMPLETED").length;

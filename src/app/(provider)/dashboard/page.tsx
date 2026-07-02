@@ -5,7 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  Plus,LogOut, Settings, ChevronRight, Menu, X
+  Plus, LogOut, Settings, ChevronRight, Menu, X,
+  AlertTriangle
 } from "lucide-react";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Notification01Icon, DeliveryBox02Icon, InboxCheckIcon, Wallet02Icon, FolderClockIcon, DropboxIcon, MailWarningIcon, BanknoteIcon } from '@hugeicons/core-free-icons'
@@ -16,21 +17,24 @@ import {
   formatNaira, relativeTime, PROJECT_STATE_CONFIG,
   MILESTONE_STATE_CONFIG, getMilestoneProgress, getInitials, getGreeting, cn
 } from "@/lib/utils";
-import type { ProviderDashboard, Project } from "@/types";
+import type { Project } from "@/types";
+import { useProviderDashboard } from "@/hooks/queries";
 
 export default function ProviderDashboardPage() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
-  const [data, setData] = useState<ProviderDashboard | null>(null);
-  const [loading, setLoading] = useState(true);
+  // const [data, setData] = useState<ProviderDashboard | null>(null);
+  // const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    dashboardApi.provider()
-      .then((res) => setData(res.data.data))
-      .catch(() => toast.error("Could not load dashboard"))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data, isLoading, isError } = useProviderDashboard();
+
+  // useEffect(() => {
+  //   dashboardApi.provider()
+  //     .then((res) => setData(res.data.data))
+  //     .catch(() => toast.error("Could not load dashboard"))
+  //     .finally(() => setLoading(false));
+  // }, []);
 
   function handleLogout() {
     logout();
@@ -61,20 +65,22 @@ export default function ProviderDashboardPage() {
                 <Image src="/logo-main.jpg" alt="MilePay" width={120} height={50} />
               </div>
             </Link>
-            
+
+
+
           </div>
           <nav className="hidden sm:flex items-center gap-1">
-              {[
-                { href: "/dashboard", label: "Dashboard" },
-                { href: "/projects/new", label: "New project" },
-                { href: "/earnings", label: "Earnings" },
-              ].map((l) => (
-                <Link key={l.href} href={l.href}
-                  className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
-                  {l.label}
-                </Link>
-              ))}
-            </nav>
+            {[
+              { href: "/dashboard", label: "Dashboard" },
+              { href: "/projects/new", label: "New project" },
+              { href: "/earnings", label: "Earnings" },
+            ].map((l) => (
+              <Link key={l.href} href={l.href}
+                className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
+                {l.label}
+              </Link>
+            ))}
+          </nav>
           <div className="flex items-center gap-2">
             <button className="btn-icon btn-ghost relative">
               <HugeiconsIcon icon={Notification01Icon} size={18} />
@@ -150,8 +156,24 @@ export default function ProviderDashboardPage() {
           </Link>
         </div>
 
+        {/* Error state */}
+        {isError && (
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 flex items-center gap-3">
+            <AlertTriangle size={16} className="text-red-500 flex-shrink-0" />
+            <p className="text-sm text-red-700">
+              Could not load dashboard data. Check your connection and{" "}
+              <button
+                onClick={() => window.location.reload()}
+                className="font-semibold underline"
+              >
+                try again
+              </button>.
+            </p>
+          </div>
+        )}
+
         {/* Stats */}
-        {loading ? (
+        {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="stat-card"><div className="skeleton h-8 w-24 mb-2 rounded" /><div className="skeleton h-3 w-16 rounded" /></div>
@@ -186,7 +208,7 @@ export default function ProviderDashboardPage() {
               </Link>
             </div>
 
-            {loading ? (
+            {isLoading ? (
               <div className="space-y-3">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="card p-5"><div className="skeleton h-5 w-48 mb-2 rounded" /><div className="skeleton h-3 w-32 rounded" /></div>
@@ -210,13 +232,13 @@ export default function ProviderDashboardPage() {
               <h3 className="font-semibold text-slate-900 text-sm mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
                 <HugeiconsIcon icon={MailWarningIcon} size={18} className="text-amber-500" /> Action needed
               </h3>
-              {loading ? (
+              {isLoading ? (
                 <div className="skeleton h-16 rounded-xl" />
               ) : (
                 <div className="space-y-3">
                   {data?.projects
                     .flatMap((p) =>
-                      p.milestones
+                      (p.milestones ?? [])
                         .filter((m) => m.state === "REVISION_REQUESTED")
                         .map((m) => ({ project: p, milestone: m }))
                     )
@@ -232,7 +254,7 @@ export default function ProviderDashboardPage() {
                       </Link>
                     )) ?? []}
                   {(data?.projects.flatMap((p) =>
-                    p.milestones.filter((m) => m.state === "REVISION_REQUESTED")
+                    (p.milestones ?? []).filter((m) => m.state === "REVISION_REQUESTED")
                   ).length ?? 0) === 0 && (
                       <p className="text-xs text-slate-400 text-center py-3">No pending actions 🎉</p>
                     )}
@@ -245,7 +267,7 @@ export default function ProviderDashboardPage() {
               <h3 className="font-semibold text-slate-900 text-sm mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
                 <HugeiconsIcon icon={BanknoteIcon} size={18} className="text-forest-600" /> Recent payouts
               </h3>
-              {loading ? (
+              {isLoading ? (
                 <div className="space-y-2">
                   {[...Array(3)].map((_, i) => <div key={i} className="skeleton h-10 rounded-lg" />)}
                 </div>

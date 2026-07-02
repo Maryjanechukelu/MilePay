@@ -14,7 +14,7 @@ import { useAuthStore } from "@/store/authStore";
 import {
   formatNaira, formatDateTime, relativeTime, copyToClipboard,
   PROJECT_STATE_CONFIG, MILESTONE_STATE_CONFIG, getMilestoneProgress,
-  calculateFee, hoursUntil, cn
+  calculateFee, hoursUntil, cn, getProjectShareUrl
 } from "@/lib/utils";
 import type { Project, Milestone } from "@/types";
 
@@ -46,7 +46,8 @@ export default function ProjectManagePage() {
   useEffect(() => { loadProject(); }, [params.id]);
 
   async function handleCopyLink() {
-    await copyToClipboard(`https://milepay.ng/project/${params.id}`);
+    const shareUrl = getProjectShareUrl(params.id as string);
+    await copyToClipboard(shareUrl);
     setCopied(true);
     toast.success("Link copied!");
     setTimeout(() => setCopied(false), 2000);

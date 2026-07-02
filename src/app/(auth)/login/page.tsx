@@ -135,7 +135,7 @@ export default function LoginPage() {
           </p>
 
           {/* Demo access */}
-          <div className="border-t border-slate-100 mt-6 pt-5">
+          {/* <div className="border-t border-slate-100 mt-6 pt-5">
             <p className="text-xs text-slate-400 text-center mb-3">Demo accounts</p>
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -162,7 +162,7 @@ export default function LoginPage() {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

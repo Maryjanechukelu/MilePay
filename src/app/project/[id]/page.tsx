@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { toast } from "sonner";
 import {
   Shield, CheckCircle, Lock, ArrowRight, Star, Clock,
@@ -11,7 +12,7 @@ import { projectApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import {
   formatNaira, formatDate, copyToClipboard,
-  PROJECT_STATE_CONFIG, CATEGORY_LABELS, cn
+  PROJECT_STATE_CONFIG, CATEGORY_LABELS, cn, getProjectShareUrl
 } from "@/lib/utils";
 import type { Project } from "@/types";
 
@@ -33,11 +34,23 @@ export default function ProjectPreviewPage() {
 
   async function handleAccept() {
     if (!isAuthenticated) {
-      router.push(`/register?role=client&next=/project/${params.id}`);
+      const nextPath = project?.state === "PENDING_ACCEPTANCE"
+        ? `/project/${params.id}`
+        : `/project/${params.id}/pay`;
+      router.push(`/register?role=client&next=${nextPath}`);
       return;
     }
     if (user?.role === "provider") {
       toast.error("You're logged in as a provider. Share this link with your client.");
+      return;
+    }
+    if (project?.state === "PENDING_PAYMENT" || project?.state === "PARTIALLY_PAID") {
+      toast.info("This project is already accepted. Please continue to payment.");
+      router.push(`/project/${params.id}/pay`);
+      return;
+    }
+    if (project?.state !== "PENDING_ACCEPTANCE") {
+      toast.error("This project cannot be accepted right now.");
       return;
     }
     setAccepting(true);
@@ -58,6 +71,7 @@ export default function ProjectPreviewPage() {
   const stateCfg = PROJECT_STATE_CONFIG[project.state];
   const isOwner = isAuthenticated && user?.id === project.providerId;
   const alreadyFunded = ["ACTIVE","COMPLETED","DISPUTED"].includes(project.state);
+  const awaitingPayment = ["PENDING_PAYMENT", "PARTIALLY_PAID"].includes(project.state);
 
   return (
     <div className="min-h-screen bg-cream">
@@ -65,10 +79,9 @@ export default function ProjectPreviewPage() {
       <header className="bg-white border-b border-slate-100 sticky top-0 z-40">
         <div className="container-wide flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-forest-900 rounded-lg flex items-center justify-center">
-              <span className="text-amber-400 font-display font-extrabold text-xs">M</span>
+            <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+              <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} loading="eager" />
             </div>
-            <span className="font-display font-bold text-forest-900">MilePay</span>
           </Link>
           <div className="flex items-center gap-2">
             {!isAuthenticated ? (
@@ -240,11 +253,12 @@ export default function ProjectPreviewPage() {
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
                     <p className="text-xs text-slate-500 mb-1.5 font-medium">Your project link</p>
                     <p className="text-xs text-slate-600 font-mono break-all mb-2">
-                      milepay.ng/project/{project.id}
+                      {getProjectShareUrl(project.id)}
                     </p>
                     <button
                       onClick={async () => {
-                        await copyToClipboard(`https://milepay.ng/project/${project.id}`);
+                        const shareUrl = getProjectShareUrl(project.id);
+                        await copyToClipboard(shareUrl);
                         setCopied(true);
                         toast.success("Link copied!");
                         setTimeout(() => setCopied(false), 2000);
@@ -287,6 +301,8 @@ export default function ProjectPreviewPage() {
                       <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Processing…
                     </span>
+                  ) : awaitingPayment ? (
+                    <><ArrowRight size={15} /> Continue to payment</>
                   ) : (
                     <><Shield size={15} /> Accept & fund project — {formatNaira(project.totalAmount)}</>
                   )}

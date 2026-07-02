@@ -59,7 +59,7 @@ export default function ClientDashboardPage() {
             </div>
             <Link href="/" className="hidden sm:flex items-center gap-2">
               <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-                <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} />
+                <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} loading="eager" />
               </div>
             </Link>
           </div>
@@ -101,7 +101,7 @@ export default function ClientDashboardPage() {
                 <div className="font-semibold text-sm">
                   <Link href="/" className="sm:hidden items-center gap-2">
                     <div className="w-full h-10 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-                      <Image src="/logo-icon.png" alt="MilePay" width={40} height={32} />
+                      <Image src="/logo-icon.png" alt="MilePay" width={40} height={32} loading="eager" />
                     </div>
                   </Link>
                 </div>

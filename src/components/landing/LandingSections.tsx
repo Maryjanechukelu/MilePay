@@ -740,7 +740,7 @@ export function Footer() {
           <div className="sm:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-full h-14 flex items-center shadow-sm group-hover:bg-forest-800 transition-colors">
-                <Image src="/bg-main.png" alt="MilePay" width={150} height={150} />
+                <Image src="/bg-main.png" alt="MilePay" width={150} height={150} loading="eager" />
               </div>
             </div>
             <p className="text-sm leading-relaxed max-w-xs">

@@ -12,7 +12,7 @@ import { projectApi, milestoneApi, uploadApi } from "@/lib/api";
 import {
   formatNaira, formatDateTime, relativeTime, copyToClipboard,
   PROJECT_STATE_CONFIG, MILESTONE_STATE_CONFIG, getMilestoneProgress,
-  calculateFee, hoursUntil, cn
+  calculateFee, hoursUntil, cn, getProjectShareUrl
 } from "@/lib/utils";
 import type { Project, Milestone } from "@/types";
 
@@ -37,7 +37,8 @@ export default function ProviderProjectDetailPage() {
   useEffect(() => { loadProject(); }, [params.id]);
 
   async function handleCopyLink() {
-    await copyToClipboard(`https://milepay.ng/project/${params.id}`);
+    const shareUrl = getProjectShareUrl(params.id as string);
+    await copyToClipboard(shareUrl);
     setCopied(true);
     toast.success("Link copied!");
     setTimeout(() => setCopied(false), 2000);
@@ -231,7 +232,7 @@ export default function ProviderProjectDetailPage() {
             <div className="card p-5">
               <p className="text-xs font-semibold text-slate-500 mb-2">Project share link</p>
               <p className="text-xs text-slate-600 font-mono break-all mb-3">
-                milepay.ng/project/{project.id}
+                {getProjectShareUrl(project.id)}
               </p>
               <button
                 onClick={handleCopyLink}
