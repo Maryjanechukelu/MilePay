@@ -13,6 +13,7 @@ export default function AdminUsersPage() {
   const [role, setRole] = useState<(typeof ROLE_TABS)[number]>("ALL");
   const [page, setPage] = useState(1);
   const { data, isLoading } = useAdminUsers({ role: role === "ALL" ? undefined : role, page });
+  const users = data ?? [];
   const { invalidateUsers } = useAdminActions();
   const [busy, setBusy] = useState<string | null>(null);
   const [suspendingId, setSuspendingId] = useState<string | null>(null);
@@ -66,11 +67,11 @@ export default function AdminUsersPage() {
 
       {isLoading ? (
         <div className="space-y-2">{[...Array(5)].map((_, i) => <div key={i} className="card p-4"><div className="skeleton h-10 rounded" /></div>)}</div>
-      ) : (data?.users ?? []).length === 0 ? (
+      ) : users.length === 0 ? (
         <div className="card p-12 text-center text-sm text-slate-400">No users found.</div>
       ) : (
         <div className="space-y-2.5">
-          {data!.users.map((u: any) => (
+          {users.map((u: any) => (
             <div key={u.id} className="card p-4">
               <div className="flex items-center justify-between gap-4">
                 <div>

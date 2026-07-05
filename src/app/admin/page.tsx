@@ -3,7 +3,7 @@ import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { AlertTriangle, RefreshCw, RefreshCwOff, ArrowRight, Clock, BarChart } from "@hugeicons/core-free-icons";
 import { relativeTime, formatNaira } from "@/lib/utils";
-import { useAdminDisputes, useAdminUnmatchedPayments } from "@/hooks/queries/useAdmin";
+import { useAdminDisputes, useAdminUnmatchedPayments, useAdminUsers } from "@/hooks/queries/useAdmin";
 
 const REASON_LABELS: Record<string, string> = {
   work_not_delivered: "Work not delivered",
@@ -16,22 +16,26 @@ const REASON_LABELS: Record<string, string> = {
 export default function AdminOverviewPage() {
   const { data: disputes, isLoading: loadingDisputes } = useAdminDisputes();
   const { data: unmatched, isLoading: loadingUnmatched } = useAdminUnmatchedPayments();
+  const { data: users, isLoading: loadingUsers } = useAdminUsers();
 
   const safeDisputes = Array.isArray(disputes) ? disputes : [];
   const safeUnmatched = Array.isArray(unmatched) ? unmatched : [];
+  const safeUsers = Array.isArray(users) ? users : [];
 
   const sortedDisputes = [...safeDisputes].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
   const totalUnmatchedValue = safeUnmatched.reduce((sum, p) => sum + p.amount, 0);
+  const totalUsers = safeUsers.length;
 
   return (
     <div className="space-y-8">
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         <StatCard label="Open disputes" value={disputes?.length ?? 0} icon={AlertTriangle} color="text-red-600" bg="bg-red-50" loading={loadingDisputes} />
         <StatCard label="Unmatched payments" value={unmatched?.length ?? 0} icon={RefreshCwOff} color="text-amber-600" bg="bg-amber-50" loading={loadingUnmatched} />
         <StatCard label="Unmatched value" value={formatNaira(totalUnmatchedValue, { compact: true })} icon={RefreshCw} color="text-amber-600" bg="bg-amber-50" loading={loadingUnmatched} />
+        <StatCard label="Total users" value={totalUsers} icon={BarChart} color="text-forest-600" bg="bg-forest-50" loading={loadingUsers} />
         {/* Active projects / platform fees have no supporting admin endpoint yet —
             wire these once the backend exposes project/fee aggregates. */}
         <StatCard label="Platform fees" value="—" icon={BarChart} color="text-forest-600" bg="bg-forest-50" loading={false} />

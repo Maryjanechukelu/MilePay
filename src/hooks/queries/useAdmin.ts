@@ -38,7 +38,7 @@ export function useAdminTransactions(params?: {
     queryKey: queryKeys.admin.transactions(params),
     queryFn: async () => {
       const res = await adminApi.getTransactions(params);
-      return res.data;
+      return res.data.data;
     },
   });
 }
@@ -48,7 +48,9 @@ export function useAdminUsers(params?: { role?: string; page?: number }) {
     queryKey: queryKeys.admin.users(params),
     queryFn: async () => {
       const res = await adminApi.getUsers(params);
-      return res.data;
+      const raw = res.data.data;
+      if (Array.isArray(raw)) return raw;
+      return raw?.users ?? raw?.items ?? [];
     },
   });
 }
