@@ -40,11 +40,11 @@ export function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => 
         )}
       >
         <div className="h-14 flex items-center gap-2 px-5 border-b border-forest-800 flex-shrink-0">
-          <Link href="/" className="flex items-center gap-2">
-                <div className="w-full h-8 flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-                <Image src="/bg-colored.png" alt="MilePay" width={80} height={50} loading="eager" style={{ width: "auto", height: "auto" }} />
-              </div>
-            </Link>
+          <Link href="/admin" className="flex items-center gap-2">
+            <div className="w-full h-8 flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+              <Image src="/bg-colored.png" alt="MilePay" width={80} height={50} loading="eager" style={{ width: "auto", height: "auto" }} />
+            </div>
+          </Link>
           <span className="badge bg-amber-500/20 text-amber-300 border-amber-500/30 text-2xs ml-auto">Admin</span>
           {/* Close button — mobile only */}
           <button
@@ -86,7 +86,7 @@ export function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => 
         </nav>
 
         <div className="p-3 border-t border-forest-800 flex-shrink-0">
-          <Link href="/" className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-forest-400 hover:text-white hover:bg-forest-900 transition-colors">
+          <Link href="/login" className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-forest-400 hover:text-white hover:bg-forest-900 transition-colors">
             <LogOutIcon size={14} /> Exit admin
           </Link>
         </div>

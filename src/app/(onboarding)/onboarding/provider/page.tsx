@@ -57,7 +57,7 @@ export default function ProviderOnboardingPage() {
       <div className="max-w-xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="flex items-center">
+          <Link href="/dashboard" className="flex items-center">
             <div className="w-full flex items-center justify-center m-0!">
               <Image src="/logo-main.jpg" alt="MilePay" width={150} height={0} className="object-contain mb-0!" loading="eager" />
             </div>

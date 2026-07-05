@@ -57,7 +57,7 @@ export default function ClientDashboardPage() {
                 {menuOpen ? <X size={18} /> : <Menu size={18} />}
               </button>
             </div>
-            <Link href="/" className="hidden sm:flex items-center gap-2">
+            <Link href="/client-dashboard" className="hidden sm:flex items-center gap-2">
                 <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
                 <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} loading="eager" style={{ width: "auto", height: "auto" }} />
               </div>

@@ -60,14 +60,11 @@ export default function ProviderDashboardPage() {
                 {menuOpen ? <X size={18} /> : <Menu size={18} />}
               </button>
             </div>
-            <Link href="/" className="hidden sm:flex items-center gap-2">
-                <div className="w-full h-12 flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
-                <Image src="/logo-main.jpg" alt="MilePay" width={120} height={50} style={{ width: "auto", height: "auto" }}  loading="eager" />
+            <Link href="/dashboard" className="hidden sm:flex items-center gap-2">
+              <div className="w-full h-12 flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+                <Image src="/logo-main.jpg" alt="MilePay" width={120} height={50} loading="eager" />
               </div>
             </Link>
-
-
-
           </div>
           <nav className="hidden sm:flex items-center gap-1">
             {[
@@ -107,7 +104,7 @@ export default function ProviderDashboardPage() {
             <aside className="fixed inset-y-0 left-0 z-50 w-64 max-w-[85%] bg-white shadow-xl border-r border-slate-100 transform transition-transform duration-300">
               <div className="flex items-center justify-between p-4 border-b border-slate-100">
                 <div className="font-semibold text-sm">
-                  <Link href="/" className="sm:hidden items-center gap-2">
+                  <Link href="/dashboard" className="sm:hidden items-center gap-2">
                     <div className="w-full h-10 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
                       <Image src="/logo-icon.png" alt="MilePay" width={40} height={32} />
                     </div>
