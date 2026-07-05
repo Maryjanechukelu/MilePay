@@ -44,6 +44,11 @@ export default function LoginPage() {
         return;
       }
 
+      if (user.role === "admin") {
+        router.push("/admin");
+        return;
+      }
+
       if (!user.onboardingComplete) {
         router.push(`/onboarding/${user.role}`);
         return;

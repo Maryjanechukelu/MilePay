@@ -12,7 +12,8 @@ export function useAdminDisputes(params?: { page?: number; limit?: number }) {
     queryKey: queryKeys.admin.disputes,
     queryFn: async () => {
       const res = await adminApi.getDisputes(params);
-      return (res.data.data ?? []) as MilestoneDispute[];
+      const raw = res.data.data;
+      return Array.isArray(raw) ? (raw as MilestoneDispute[]) : [];
     },
   });
 }
@@ -22,7 +23,8 @@ export function useAdminUnmatchedPayments() {
     queryKey: queryKeys.admin.unmatchedPayments,
     queryFn: async () => {
       const res = await adminApi.getUnmatchedPayments();
-      return (res.data.data ?? []) as Payment[];
+      const raw = res.data.data;
+      return Array.isArray(raw) ? (raw as Payment[]) : [];
     },
   });
 }
@@ -49,6 +51,14 @@ export function useAdminUsers(params?: { role?: string; page?: number }) {
       return res.data;
     },
   });
+}
+
+export function useAdminActions() {
+  const queryClient = useQueryClient();
+  const invalidateDisputes = () => queryClient.invalidateQueries({ queryKey: ["admin", "disputes"] });
+  const invalidateUnmatched = () => queryClient.invalidateQueries({ queryKey: ["admin", "unmatched"] });
+  const invalidateUsers = () => queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+  return { invalidateDisputes, invalidateUnmatched, invalidateUsers };
 }
 
 // ─── Mutations ────────────────────────────────────────────────────
@@ -136,3 +146,20 @@ export function useSuspendUser() {
     },
   });
 }
+
+// export function useAdminUsers(params: { role?: string; page: number }) {
+//   return useQuery({
+//     queryKey: ["admin", "users", params],
+//     queryFn: async () => {
+//       const res = await adminApi.getUsers(params);
+//       const raw = res.data?.data ?? {};
+//       return {
+//         users: extractList<any>(raw, "users", "items"),
+//         total: raw.total ?? 0,
+//         page: raw.page ?? params.page,
+//         pages: raw.pages ?? 1,
+//       };
+//     },
+//     placeholderData: keepPreviousData,
+//   });
+// }
