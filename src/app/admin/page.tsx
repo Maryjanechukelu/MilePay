@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { AlertTriangle, RefreshCw, ArrowRight, Clock, BarChart3 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { AlertTriangle, RefreshCw, RefreshCwOff, ArrowRight, Clock, BarChart } from "@hugeicons/core-free-icons";
 import { relativeTime, formatNaira } from "@/lib/utils";
 import { useAdminDisputes, useAdminUnmatchedPayments } from "@/hooks/queries/useAdmin";
 
@@ -29,11 +30,11 @@ export default function AdminOverviewPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <StatCard label="Open disputes" value={disputes?.length ?? 0} icon={AlertTriangle} color="text-red-600" bg="bg-red-50" loading={loadingDisputes} />
-        <StatCard label="Unmatched payments" value={unmatched?.length ?? 0} icon={RefreshCw} color="text-amber-600" bg="bg-amber-50" loading={loadingUnmatched} />
+        <StatCard label="Unmatched payments" value={unmatched?.length ?? 0} icon={RefreshCwOff} color="text-amber-600" bg="bg-amber-50" loading={loadingUnmatched} />
         <StatCard label="Unmatched value" value={formatNaira(totalUnmatchedValue, { compact: true })} icon={RefreshCw} color="text-amber-600" bg="bg-amber-50" loading={loadingUnmatched} />
         {/* Active projects / platform fees have no supporting admin endpoint yet —
             wire these once the backend exposes project/fee aggregates. */}
-        <StatCard label="Platform fees" value="—" icon={BarChart3} color="text-forest-600" bg="bg-forest-50" loading={false} />
+        <StatCard label="Platform fees" value="—" icon={BarChart} color="text-forest-600" bg="bg-forest-50" loading={false} />
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -42,7 +43,7 @@ export default function AdminOverviewPage() {
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
             <h3 className="font-semibold text-slate-900 text-sm">Oldest open disputes</h3>
             <Link href="/admin/disputes" className="text-xs font-medium text-forest-700 hover:underline flex items-center gap-1">
-              View all <ArrowRight size={12} />
+              View all <HugeiconsIcon icon={ArrowRight} size={12} />
             </Link>
           </div>
           {loadingDisputes ? (
@@ -58,7 +59,7 @@ export default function AdminOverviewPage() {
                     <p className="text-2xs text-red-600">{REASON_LABELS[d.reason] ?? d.reason}</p>
                   </div>
                   <span className="text-2xs text-red-500 flex items-center gap-1 flex-shrink-0">
-                    <Clock size={11} /> {relativeTime(d.createdAt)}
+                    <HugeiconsIcon icon={Clock} size={12} /> {relativeTime(d.createdAt)}
                   </span>
                 </Link>
               ))}
@@ -71,7 +72,7 @@ export default function AdminOverviewPage() {
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
             <h3 className="font-semibold text-slate-900 text-sm">Recent unmatched payments</h3>
             <Link href="/admin/unmatched" className="text-xs font-medium text-forest-700 hover:underline flex items-center gap-1">
-              View all <ArrowRight size={12} />
+              View all <HugeiconsIcon icon={ArrowRight} size={12} />
             </Link>
           </div>
           {loadingUnmatched ? (
@@ -95,14 +96,14 @@ export default function AdminOverviewPage() {
       <Link href="/admin/analytics" className="card p-5 flex items-center justify-between hover:border-slate-300 transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-forest-50 rounded-xl flex items-center justify-center">
-            <BarChart3 size={16} className="text-forest-600" />
+            <HugeiconsIcon icon={BarChart} size={16} className="text-forest-600" />
           </div>
           <div>
             <p className="font-semibold text-slate-900 text-sm">See dispute & payment trends</p>
             <p className="text-xs text-slate-400">Breakdown by reason, resolution time, and outcome</p>
           </div>
         </div>
-        <ArrowRight size={16} className="text-slate-400" />
+        <HugeiconsIcon icon={ArrowRight} size={16} className="text-slate-400" />
       </Link>
     </div>
   );
@@ -114,7 +115,7 @@ function StatCard({ label, value, icon: Icon, color, bg, loading }: {
   return (
     <div className="stat-card">
       <div className={`w-9 h-9 ${bg} rounded-xl flex items-center justify-center mb-3`}>
-        <Icon size={16} className={color} />
+        <HugeiconsIcon icon={Icon} size={16} className={color} />
       </div>
       <p className="stat-value">{loading ? "—" : value}</p>
       <p className="stat-label">{label}</p>

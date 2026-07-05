@@ -53,13 +53,13 @@ export default function ProviderOnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream py-12 px-4">
+    <div className="min-h-screen bg-white py-12 px-4">
       <div className="max-w-xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <Link href="/" className="flex items-center">
             <div className="w-full flex items-center justify-center m-0!">
-              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={200} className="object-contain mb-4" style={{ width: "auto", height: "auto" }}  loading="eager" />
+              <Image src="/logo-main.jpg" alt="MilePay" width={150} height={0} className="object-contain mb-0!" loading="eager" />
             </div>
           </Link>
           <h1 className="font-display text-2xl font-bold text-slate-900">Set up your provider account</h1>

@@ -38,12 +38,12 @@ export default function ForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+      <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="w-full max-w-md">
           <div className="mb-6">
           <Link href="/" className="flex items-center">
               <div className="w-full flex items-center justify-center">
-              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" style={{ width: "auto", height: "auto" }}  loading="eager" />
+              <Image src="/logo-main.jpg" alt="MilePay" width={150} height={0} className="object-contain mb-0!" loading="eager" />
             </div>
           </Link>
         </div>
@@ -86,13 +86,13 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="mb-6">
           <Link href="/" className="flex items-center">
             <div className="w-full flex items-center justify-center">
-              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" style={{ width: "auto", height: "auto" }} />
+              <Image src="/logo-main.jpg" alt="MilePay" width={150} height={0} className="object-contain mb-0!" loading="eager" />
             </div>
           </Link>
         </div>

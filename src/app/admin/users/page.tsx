@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import { toast } from "sonner";
-import { CheckCircle, Ban, UserCheck } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckCircle, BanIcon, UserCheck } from "@hugeicons/core-free-icons";
 import { adminApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useAdminUsers, useAdminActions } from "@/hooks/queries/useAdmin";
@@ -79,12 +80,12 @@ export default function AdminUsersPage() {
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {!u.verified && (
                     <button onClick={() => handleVerify(u.id)} disabled={busy === u.id} className="btn-outline btn-sm gap-1.5 disabled:opacity-40">
-                      <UserCheck size={12} /> Verify
+                      <HugeiconsIcon icon={UserCheck} size={12} /> Verify
                     </button>
                   )}
                   {!u.suspended && (
                     <button onClick={() => setSuspendingId(suspendingId === u.id ? null : u.id)} className="btn-outline btn-sm gap-1.5 text-red-600 border-red-200 hover:bg-red-50">
-                      <Ban size={12} /> Suspend
+                      <HugeiconsIcon icon={BanIcon} size={12} /> Suspend
                     </button>
                   )}
                   {u.suspended && <span className="badge badge-red text-2xs">Suspended</span>}

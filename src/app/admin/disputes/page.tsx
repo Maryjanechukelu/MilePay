@@ -1,7 +1,8 @@
 "use client";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { CheckCircle, Banknote, RefreshCw, X, FileText, Clock, Banknote as BanknoteIcon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckCircle, Banknote, RefreshCw, X, FileText, Clock, Banknote as BanknoteIcon } from "@hugeicons/core-free-icons";
 import { adminApi } from "@/lib/api";
 import { relativeTime, cn } from "@/lib/utils";
 import type { MilestoneDispute } from "@/types";
@@ -56,7 +57,7 @@ export default function AdminDisputesPage() {
   if (sorted.length === 0) {
     return (
       <div className="card p-12 text-center">
-        <CheckCircle size={32} className="text-forest-400 mx-auto mb-3" />
+        <HugeiconsIcon icon={CheckCircle} size={32} className="text-forest-400 mx-auto mb-3" />
         <p className="font-semibold text-slate-700">No open disputes</p>
         <p className="text-sm text-slate-400 mt-1">All disputes have been resolved.</p>
       </div>
@@ -84,7 +85,7 @@ export default function AdminDisputesPage() {
               <span className="badge badge-blue text-2xs">Provider replied</span>
             ) : (
               <span className="badge bg-slate-100 text-slate-500 border-slate-200 text-2xs flex items-center gap-1 w-fit">
-                <Clock size={10} /> Awaiting provider
+                <HugeiconsIcon icon={Clock} size={10} /> Awaiting provider
               </span>
             )}
           </button>
@@ -106,7 +107,7 @@ export default function AdminDisputesPage() {
                 </p>
               </div>
               <button onClick={() => setSelectedId(null)} className="btn-icon btn-ghost flex-shrink-0" aria-label="Close">
-                <X size={16} />
+                <HugeiconsIcon icon={X} size={16} />
               </button>
             </div>
 
@@ -123,7 +124,7 @@ export default function AdminDisputesPage() {
                   </div>
                 ) : (
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-start gap-2">
-                    <Clock size={13} className="text-slate-400 flex-shrink-0 mt-0.5" />
+                    <HugeiconsIcon icon={Clock} size={13} className="text-slate-400 flex-shrink-0 mt-0.5" />
                     <p className="text-xs text-slate-500 leading-relaxed">No response from the provider yet. You can still resolve, or wait for their reply.</p>
                   </div>
                 )}
@@ -154,11 +155,11 @@ export default function AdminDisputesPage() {
                 />
                 <div className="grid grid-cols-2 gap-3 mt-3">
                   <button onClick={() => handleResolve(selected.id, "release")} disabled={!!resolving || !notes} className="btn-primary justify-center gap-2 disabled:opacity-40">
-                    {resolving === selected.id + "release" ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Banknote size={14} />}
+                    {resolving === selected.id + "release" ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <HugeiconsIcon icon={Banknote} size={14} />}
                     Release to provider
                   </button>
                   <button onClick={() => handleResolve(selected.id, "refund")} disabled={!!resolving || !notes} className="btn-danger justify-center gap-2 disabled:opacity-40">
-                    {resolving === selected.id + "refund" ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <RefreshCw size={14} />}
+                    {resolving === selected.id + "refund" ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <HugeiconsIcon icon={RefreshCw} size={14} />}
                     Refund client
                   </button>
                 </div>
@@ -167,7 +168,7 @@ export default function AdminDisputesPage() {
           </div>
         ) : (
           <div className="card p-12 text-center border-dashed">
-            <FileText size={28} className="text-slate-300 mx-auto mb-3" />
+            <HugeiconsIcon icon={FileText} size={28} className="text-slate-300 mx-auto mb-3" />
             <p className="font-semibold text-slate-600 text-sm">Select a dispute to review</p>
             <p className="text-xs text-slate-400 mt-1">Oldest cases are listed first — {sorted.length} waiting.</p>
           </div>

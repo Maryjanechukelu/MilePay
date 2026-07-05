@@ -45,7 +45,7 @@ function VerifyEmailContent() {
 
   if (verified) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+      <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="card p-10 max-w-sm w-full text-center shadow-md">
           <CheckCircle size={48} className="text-forest-600 mx-auto mb-4" />
           <h2 className="font-display text-xl font-bold text-slate-900 mb-2">Email verified!</h2>
@@ -56,12 +56,12 @@ function VerifyEmailContent() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="max-w-sm w-full">
         <div className="mb-6">
           <Link href="/" className="flex items-center">
               <div className="w-full flex items-center justify-center">
-              <Image src="/logo-main.jpg" alt="MilePay" width={200} height={0} className="object-contain mb-0!" style={{ width: "auto", height: "auto" }}  loading="eager" />
+              <Image src="/logo-main.jpg" alt="MilePay" width={150} height={0} className="object-contain mb-0!" loading="eager" />
             </div>
           </Link>
         </div>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ChevronLeft, X, LogOutIcon } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
 import { ADMIN_NAV } from "@/lib/admin-nav";
 import { useAdminDisputes, useAdminUnmatchedPayments } from "@/hooks/queries/useAdmin";
@@ -69,7 +70,7 @@ export function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => 
                   isActive ? "bg-forest-800 text-white" : "text-forest-400 hover:bg-forest-900 hover:text-white"
                 )}
               >
-                <item.icon size={16} className="flex-shrink-0" />
+                <HugeiconsIcon icon={item.icon} size={16} className="flex-shrink-0" />
                 <span className="flex-1 truncate">{item.label}</span>
                 {!!count && count > 0 && (
                   <span className={cn(

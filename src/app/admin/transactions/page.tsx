@@ -1,8 +1,10 @@
 "use client";
 import { useState } from "react";
-import { AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { AlertTriangle, ChevronLeft, ChevronRight, InvoiceIcon } from "@hugeicons/core-free-icons";
 import { formatNaira, formatDateTime, cn } from "@/lib/utils";
 import { useAdminTransactions } from "@/hooks/queries/useAdmin";
+// import { Hu } from "zod/v4/locales";
 
 const STATE_TABS = ["ALL", "success", "pending", "failed"] as const;
 
@@ -32,7 +34,7 @@ export default function AdminTransactionsPage() {
 
       {isError && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-5 flex items-center gap-3">
-          <AlertTriangle size={16} className="text-red-500 flex-shrink-0" />
+          <HugeiconsIcon icon={AlertTriangle} size={16} className="text-red-500 flex-shrink-0" />
           <p className="text-sm text-red-700">Could not load transactions.</p>
         </div>
       )}
@@ -56,7 +58,10 @@ export default function AdminTransactionsPage() {
                 </tr>
               ))
             ) : (data?.transactions ?? []).length === 0 ? (
-              <tr><td colSpan={5} className="px-4 py-10 text-center text-sm text-slate-400">No transactions found.</td></tr>
+              <tr className="">
+                {/* <td colSpan={5}></td> */}
+                <td colSpan={5} className="px-4 py-10 text-center text-sm text-slate-400">No transactions found.</td>
+              </tr>
             ) : (
               data!.transactions.map((t: any) => (
                 <tr key={t.id ?? t.reference} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/60">
@@ -80,9 +85,9 @@ export default function AdminTransactionsPage() {
 
       {data && data.pages > 1 && (
         <div className="flex items-center justify-center gap-3 mt-6">
-          <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="btn-icon btn-ghost disabled:opacity-30"><ChevronLeft size={16} /></button>
+          <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="btn-icon btn-ghost disabled:opacity-30"><HugeiconsIcon icon={ChevronLeft} size={16} /></button>
           <span className="text-xs text-slate-500">Page {data.page} of {data.pages}</span>
-          <button onClick={() => setPage((p) => Math.min(data.pages, p + 1))} disabled={page >= data.pages} className="btn-icon btn-ghost disabled:opacity-30"><ChevronRight size={16} /></button>
+          <button onClick={() => setPage((p) => Math.min(data.pages, p + 1))} disabled={page >= data.pages} className="btn-icon btn-ghost disabled:opacity-30"><HugeiconsIcon icon={ChevronRight} size={16} /></button>
         </div>
       )}
 

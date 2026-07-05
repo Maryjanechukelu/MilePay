@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import Image from "next/image";
 import { toast } from "sonner";
 import { ArrowRight, ArrowLeft, CheckCircle, User, FileText } from "lucide-react";
 import { clientStep1Schema, type ClientStep1Data } from "@/schemas";
@@ -40,14 +41,11 @@ export default function ClientOnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream py-12 px-4">
+    <div className="min-h-screen bg-white py-12 px-4">
       <div className="max-w-lg mx-auto">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-forest-900 rounded-lg flex items-center justify-center">
-              <span className="text-amber-400 font-display font-extrabold text-sm">M</span>
-            </div>
-            <span className="font-display font-bold text-lg text-forest-900">MilePay</span>
+            <Image src="/logo-main.jpg" alt="MilePay" width={150} height={0} className="object-contain mb-0!" loading="eager" />
           </Link>
           <h1 className="font-display text-2xl font-bold text-slate-900">Set up your client account</h1>
           <p className="text-slate-500 text-sm mt-1">Step {step} of 2 — takes under a minute</p>
