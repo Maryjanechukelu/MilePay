@@ -53,7 +53,7 @@ export default function ProviderProjectDetailPage() {
 
   const stateCfg = PROJECT_STATE_CONFIG[project.state];
   const progress = getMilestoneProgress(project.milestones);
-  const activeM  = project.milestones.find((m) => m.state === "IN_PROGRESS");
+  const activeM = project.milestones.find((m) => m.state === "IN_PROGRESS");
 
   return (
     <div className="min-h-screen bg-cream">
@@ -204,8 +204,8 @@ export default function ProviderProjectDetailPage() {
                       <div className="flex items-center gap-2 min-w-0">
                         <div className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0",
                           m.state === "PAID" ? "bg-forest-500" :
-                          m.state === "APPROVED" || m.state === "APPROVED_PENDING_TRANSFER" ? "bg-amber-500" :
-                          "bg-slate-200"
+                            m.state === "APPROVED" || m.state === "APPROVED_PENDING_TRANSFER" ? "bg-amber-500" :
+                              "bg-slate-200"
                         )} />
                         <span className="text-xs text-slate-600 truncate">{m.title}</span>
                       </div>
@@ -275,26 +275,26 @@ function ProviderMilestoneRow({
     <div className={cn(
       "border rounded-2xl p-4 transition-all duration-200",
       isLocked ? "border-slate-100 bg-slate-50/50 opacity-60" :
-      m.state === "SUBMITTED" ? "border-amber-200 bg-amber-50/40" :
-      m.state === "PAID" ? "border-forest-200 bg-forest-50/30" :
-      m.state === "DISPUTED" ? "border-red-200 bg-red-50/30" :
-      "border-slate-200 bg-white"
+        m.state === "SUBMITTED" ? "border-amber-200 bg-amber-50/40" :
+          m.state === "PAID" ? "border-forest-200 bg-forest-50/30" :
+            m.state === "DISPUTED" ? "border-red-200 bg-red-50/30" :
+              "border-slate-200 bg-white"
     )}>
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-start gap-3 flex-1 min-w-0">
           <div className={cn("w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
             m.state === "PAID" ? "bg-forest-600" :
-            m.state === "SUBMITTED" ? "bg-amber-500" :
-            m.state === "IN_PROGRESS" ? "bg-blue-500" :
-            m.state === "DISPUTED" ? "bg-red-500" :
-            "bg-slate-200"
+              m.state === "SUBMITTED" ? "bg-amber-500" :
+                m.state === "IN_PROGRESS" ? "bg-blue-500" :
+                  m.state === "DISPUTED" ? "bg-red-500" :
+                    "bg-slate-200"
           )}>
             {m.state === "PAID" ? <CheckCircle size={14} className="text-white" /> :
-             m.state === "SUBMITTED" ? <Clock size={14} className="text-white" /> :
-             m.state === "IN_PROGRESS" ? <ArrowRight size={14} className="text-white" /> :
-             m.state === "LOCKED" ? <Lock size={12} className="text-slate-400" /> :
-             m.state === "DISPUTED" ? <AlertTriangle size={13} className="text-white" /> :
-             <span className="text-xs font-bold text-slate-500">{index + 1}</span>}
+              m.state === "SUBMITTED" ? <Clock size={14} className="text-white" /> :
+                m.state === "IN_PROGRESS" ? <ArrowRight size={14} className="text-white" /> :
+                  m.state === "LOCKED" ? <Lock size={12} className="text-slate-400" /> :
+                    m.state === "DISPUTED" ? <AlertTriangle size={13} className="text-white" /> :
+                      <span className="text-xs font-bold text-slate-500">{index + 1}</span>}
           </div>
           <div className="min-w-0">
             <p className={cn("font-semibold text-sm", isLocked ? "text-slate-400" : "text-slate-900")}>
@@ -385,10 +385,14 @@ function SubmitMilestoneModal({
   });
 
   async function handleSubmit() {
-    if (text.length < 50) { toast.error("Delivery note must be at least 50 characters"); return; }
+    if (text.length < 10) { toast.error("Delivery note must be at least 10 characters"); return; }
     setLoading(true);
     try {
-      const deliveryFiles = files.length ? await uploadApi.uploadFiles(files) : undefined;
+      // Temporary until upload endpoint is available
+      const deliveryFiles = files.length
+        ? files.map(file => `temp-upload/${file.name}`)
+        : undefined;
+      // const deliveryFiles = files.length ? await uploadApi.uploadFiles(files) : undefined;
       await milestoneApi.submit(projectId, milestone.id, { deliveryNote: text, deliveryFiles });
       toast.success("Milestone submitted! Your client has been notified.");
       onSuccess();
@@ -423,10 +427,10 @@ function SubmitMilestoneModal({
               rows={4}
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Describe what you delivered, how to access it, any notes for the client… (min 50 chars)"
+              placeholder="Describe what you delivered, how to access it, any notes for the client… (min 10 chars)"
             />
-            <p className={cn("text-2xs mt-1", text.length < 50 ? "text-slate-400" : "text-forest-600")}>
-              {text.length} / 50 min characters
+            <p className={cn("text-2xs mt-1", text.length < 10 ? "text-slate-400" : "text-forest-600")}>
+              {text.length} / 10 min characters
             </p>
           </div>
 

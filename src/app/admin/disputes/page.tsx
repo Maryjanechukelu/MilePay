@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CheckCircle, Banknote, RefreshCw, X, FileText, Clock, Banknote as BanknoteIcon } from "@hugeicons/core-free-icons";
@@ -28,6 +28,12 @@ export default function AdminDisputesPage() {
     [disputes]
   );
   const selected = sorted.find((d) => d.id === selectedId) ?? null;
+
+  // useEffect(() => {
+  //   if (!selectedId && sorted.length) {
+  //     setSelectedId(sorted[0].id);
+  //   }
+  // }, [sorted, selectedId]);
 
   async function handleResolve(id: string, outcome: "release" | "refund") {
     if (!notes) { toast.error("Add resolution notes"); return; }
@@ -134,10 +140,10 @@ export default function AdminDisputesPage() {
                 <div>
                   <p className="text-2xs font-semibold text-slate-500 mb-2">Evidence</p>
                   <div className="flex gap-2 flex-wrap">
-                    {selected.clientEvidence.map((f) => (
+                    {selected.clientEvidence.map((f: any) => (
                       <a key={f.id} href={f.url} target="_blank" rel="noopener noreferrer" className="text-2xs text-blue-600 hover:underline bg-blue-50 border border-blue-200 rounded-lg px-2 py-1">📎 {f.name}</a>
                     ))}
-                    {selected.providerEvidence?.map((f) => (
+                    {selected.providerEvidence?.map((f: any) => (
                       <a key={f.id} href={f.url} target="_blank" rel="noopener noreferrer" className="text-2xs text-forest-600 hover:underline bg-forest-50 border border-forest-200 rounded-lg px-2 py-1">📎 {f.name}</a>
                     ))}
                   </div>

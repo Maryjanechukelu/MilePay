@@ -335,7 +335,7 @@ export const dashboardApi = {
   },
 
   client: async () => {
-    const { projects } = await projectApi.list({ role: "provider", limit: 100 });
+    const { projects } = await projectApi.list({ role: "client", limit: 100 });
     // const projects = ((res.data?.data?.projects ?? []) as any[]).map((p) => ({
     //   ...p,
     //   totalAmount: Number(p.total_amount ?? 0),

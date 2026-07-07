@@ -438,7 +438,7 @@ function MilestoneRow({
           <>
             <button onClick={() => onAction("approve")}
               className="btn-primary btn-sm gap-1.5 bg-forest-600 hover:bg-forest-700">
-              <CheckCircle size={13} /> Approve — release {formatNaira(providerReceives)}
+              <CheckCircle size={13} /> Approve — release funds
             </button>
             <button onClick={() => onAction("revision")} className="btn-ghost btn-sm gap-1.5 border border-slate-200">
               <RotateCcw size={13} /> Request revision
@@ -545,7 +545,7 @@ function ActionModal({
                 <div>
                   <p className="text-sm font-semibold text-forest-900">Confirm approval</p>
                   <p className="text-xs text-forest-700 mt-1 leading-relaxed">
-                    Approving this milestone will release <strong>{formatNaira(providerReceives)}</strong> to the provider.
+                    Approving this milestone will release funds to the provider.
                     This action cannot be undone.
                   </p>
                 </div>

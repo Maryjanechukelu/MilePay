@@ -12,8 +12,30 @@ export function useAdminDisputes(params?: { page?: number; limit?: number }) {
     queryKey: queryKeys.admin.disputes,
     queryFn: async () => {
       const res = await adminApi.getDisputes(params);
-      const raw = res.data.data;
-      return Array.isArray(raw) ? (raw as MilestoneDispute[]) : [];
+
+      const disputes = res.data.data?.disputes ?? [];
+
+      return disputes.map((d: any) => ({
+        id: d.id,
+
+        projectId: d.project_id,
+        milestoneId: d.milestone_id,
+
+        reason: d.reason,
+        description: d.description,
+
+        createdAt: d.created_at,
+        updatedAt: d.updated_at,
+
+        providerResponse: d.counter_description,
+
+        clientEvidence: d.evidence_files ?? [],
+        providerEvidence: d.counter_evidence_files ?? [],
+
+        outcome: d.outcome,
+
+        adminNotes: d.admin_notes,
+      }));
     },
   });
 }

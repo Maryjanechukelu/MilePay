@@ -131,7 +131,7 @@ export const createProjectSchema = z.object({
 export const milestoneSubmitSchema = z.object({
   deliveryNote: z
     .string()
-    .min(50, "Describe what you delivered (min 50 characters)"),
+    .min(10, "Describe what you delivered (min 10 characters)"),
 });
 
 export const revisionRequestSchema = z.object({
