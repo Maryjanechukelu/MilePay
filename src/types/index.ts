@@ -193,6 +193,7 @@ export interface MilestoneDispute {
   resolvedAt?: string;
   adminNotes?: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 // ─── Supporting types ─────────────────────────────────────────────
@@ -230,15 +231,15 @@ export interface Notification {
   title: string;
   body: string;
   type:
-    | "project_funded"
-    | "milestone_submitted"
-    | "milestone_approved"
-    | "milestone_paid"
-    | "revision_requested"
-    | "dispute_raised"
-    | "dispute_resolved"
-    | "payment_received"
-    | "auto_approved";
+  | "project_funded"
+  | "milestone_submitted"
+  | "milestone_approved"
+  | "milestone_paid"
+  | "revision_requested"
+  | "dispute_raised"
+  | "dispute_resolved"
+  | "payment_received"
+  | "auto_approved";
   read: boolean;
   projectId?: string;
   milestoneId?: string;
