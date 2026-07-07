@@ -10,11 +10,11 @@ import { ArrowRight, ArrowLeft, CheckCircle, User, FileText } from "lucide-react
 import { clientStep1Schema, type ClientStep1Data } from "@/schemas";
 import { onboardingApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
-import { NIGERIAN_STATES, cn } from "@/lib/utils";
+import { NIGERIAN_STATES, cn, getSafeNextPath, consumePendingNext } from "@/lib/utils";
 
 const STEPS = [
   { n: 1, label: "Profile", icon: User },
-  { n: 2, label: "Terms",   icon: FileText },
+  { n: 2, label: "Terms", icon: FileText },
 ];
 
 export default function ClientOnboardingPage() {
@@ -28,13 +28,17 @@ export default function ClientOnboardingPage() {
       await onboardingApi.clientConfirm();
       updateUser({ onboardingComplete: true });
       toast.success("Account activated! Welcome to MilePay.");
-      // If they came from a project link, redirect back
-      if (typeof window !== "undefined") {
-        const next = new URLSearchParams(window.location.search).get("next");
-        router.push(next || "/client-dashboard");
-      } else {
-        router.push("/client-dashboard");
-      }
+
+      // Prefer whatever's in the URL right now; if that's missing (the
+      // verification-email hop can lose it), fall back to what was
+      // persisted when the client first clicked "Accept & fund". This is
+      // the final stop, so consume (clear) it here rather than peek.
+      const queryNext = typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("next")
+        : null;
+      const next = getSafeNextPath(queryNext) ?? consumePendingNext();
+
+      router.push(next || "/client-dashboard");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Could not activate account");
     }

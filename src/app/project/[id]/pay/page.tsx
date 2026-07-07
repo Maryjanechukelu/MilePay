@@ -1,16 +1,36 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "sonner";
 import {
   Building2, Copy, CheckCircle, ArrowRight,
-  RefreshCw, AlertCircle, Clock, Shield
+  RefreshCw, AlertCircle, Clock, Shield, LifeBuoy, Send
 } from "lucide-react";
 import { projectApi } from "@/lib/api";
 import { formatNaira, copyToClipboard } from "@/lib/utils";
 import type { Project } from "@/types";
+
+// After this many seconds of no virtual account, stop implying "any second
+// now" and tell the client this looks stuck instead.
+const STUCK_AFTER_SECONDS = 60;
+
+// After this many seconds of the client saying "I've sent it" with no
+// state change, switch from "confirming automatically" to "this looks
+// stuck." Slightly longer than the provisioning threshold since bank
+// transfers can genuinely take a bit longer than account setup.
+const PAYMENT_STUCK_AFTER_SECONDS = 90;
+
+// While waiting on a virtual account or on normal payment confirmation.
+const NORMAL_POLL_MS = 10000;
+// Once the client has told us they sent the transfer, check more often —
+// they're actively waiting on this screen, not just holding it open.
+const REPORTED_POLL_MS = 4000;
+
+// Where a client should go if provisioning or payment confirmation is
+// genuinely stuck. Swap this for your real support channel.
+const SUPPORT_CONTACT_URL = "mailto:support@milepay.ng";
 
 export default function PaymentInstructionsPage() {
   const params = useParams();
@@ -21,28 +41,64 @@ export default function PaymentInstructionsPage() {
   const [provisioning, setProvisioning] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+  // When we first noticed there was no virtual account yet.
+  const provisioningStartedAtRef = useRef<number | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+  // "I've sent it" — client-reported payment, tracked separately from the
+  // provisioning clock above since they're different waits with different
+  // thresholds and different messaging.
+  const [paymentReported, setPaymentReported] = useState(false);
+  const paymentReportedAtRef = useRef<number | null>(null);
+  const [paymentElapsedSeconds, setPaymentElapsedSeconds] = useState(0);
+
   useEffect(() => {
     loadProject();
   }, []);
 
-  // Poll every 10s for payment confirmation
+  // Poll for payment confirmation. Interval shortens once the client has
+  // told us they sent the transfer — they're actively watching this page.
   useEffect(() => {
-    if (!project || ["ACTIVE","COMPLETED","DISPUTED"].includes(project.state)) return;
+    if (!project || ["ACTIVE", "COMPLETED", "DISPUTED"].includes(project.state)) return;
+    const ms = paymentReported ? REPORTED_POLL_MS : NORMAL_POLL_MS;
     const interval = setInterval(() => {
       setPolling(true);
       projectApi.get(params.id as string)
         .then((res) => {
           const p = res.data.data as Project;
           setProject(p);
-          if (["ACTIVE","COMPLETED"].includes(p.state)) {
+          if (["ACTIVE", "COMPLETED"].includes(p.state)) {
             toast.success("Payment confirmed! Your project is now active.");
             router.push(`/project/${params.id}/manage`);
           }
         })
         .finally(() => setPolling(false));
-    }, 10000);
+    }, ms);
     return () => clearInterval(interval);
-  }, [project, params.id, router]);
+  }, [project, params.id, router, paymentReported]);
+
+  // Tick every second while we're waiting on a virtual account.
+  useEffect(() => {
+    if (!provisioning) return;
+    const tick = setInterval(() => {
+      if (provisioningStartedAtRef.current) {
+        setElapsedSeconds(Math.floor((Date.now() - provisioningStartedAtRef.current) / 1000));
+      }
+    }, 1000);
+    return () => clearInterval(tick);
+  }, [provisioning]);
+
+  // Tick every second while waiting on payment confirmation after the
+  // client has told us they sent it.
+  useEffect(() => {
+    if (!paymentReported) return;
+    const tick = setInterval(() => {
+      if (paymentReportedAtRef.current) {
+        setPaymentElapsedSeconds(Math.floor((Date.now() - paymentReportedAtRef.current) / 1000));
+      }
+    }, 1000);
+    return () => clearInterval(tick);
+  }, [paymentReported]);
 
   async function loadProject() {
     try {
@@ -52,9 +108,14 @@ export default function PaymentInstructionsPage() {
 
       if (!nextProject.virtualAccount) {
         setProvisioning(true);
-        toast.loading("Preparing your virtual account…", { id: "virtual-account" });
+        if (!provisioningStartedAtRef.current) {
+          provisioningStartedAtRef.current = Date.now();
+          setElapsedSeconds(0);
+        }
       } else {
         setProvisioning(false);
+        provisioningStartedAtRef.current = null;
+        setElapsedSeconds(0);
         toast.dismiss("virtual-account");
       }
     } catch (err: unknown) {
@@ -73,6 +134,23 @@ export default function PaymentInstructionsPage() {
     setTimeout(() => setCopiedField(null), 2000);
   }
 
+  function handleReportPayment() {
+    setPaymentReported(true);
+    paymentReportedAtRef.current = Date.now();
+    setPaymentElapsedSeconds(0);
+    toast.success("Got it — checking for your payment now.");
+    // Immediate check, don't just wait for the next interval tick.
+    loadProject();
+  }
+
+  function handleCheckPaymentNow() {
+    toast.loading("Checking again…", { id: "payment-check" });
+    loadProject().finally(() => toast.dismiss("payment-check"));
+  }
+
+  const isStuck = provisioning && elapsedSeconds >= STUCK_AFTER_SECONDS;
+  const isPaymentStuck = paymentReported && paymentElapsedSeconds >= PAYMENT_STUCK_AFTER_SECONDS;
+
   if (loading) return (
     <div className="min-h-screen bg-cream flex items-center justify-center">
       <div className="w-6 h-6 border-2 border-forest-600 border-t-transparent rounded-full animate-spin" />
@@ -90,7 +168,7 @@ export default function PaymentInstructionsPage() {
   );
 
   // Already funded
-  if (["ACTIVE","COMPLETED","DISPUTED"].includes(project.state)) {
+  if (["ACTIVE", "COMPLETED", "DISPUTED"].includes(project.state)) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center px-4">
         <div className="max-w-sm w-full card p-8 text-center">
@@ -169,12 +247,12 @@ export default function PaymentInstructionsPage() {
           </div>
         </div>
 
-        {/* Payment details */}
+        {/* Payment details / provisioning / stuck states */}
         {va ? (
           <div className="card p-6 mb-5 shadow-md">
             <div className="flex items-center gap-2 mb-5">
               <div className="w-8 h-8 bg-forest-900 rounded-lg flex items-center justify-center">
-                <span className="text-amber-400 font-display font-extrabold text-xs">M</span>
+               <Image src="/logo-icon.png" alt="MilePay" width={20} height={20} className="object-contain mb-0!" loading="eager" />
               </div>
               <div>
                 <p className="text-xs font-semibold text-slate-700">Your project payment account</p>
@@ -232,19 +310,96 @@ export default function PaymentInstructionsPage() {
                 Screenshot these details before leaving this page. Use them exactly — any error may cause a misdirected payment.
               </p>
             </div>
+
+            {/* "I've sent it" / payment status */}
+            {!paymentReported ? (
+              <button
+                onClick={handleReportPayment}
+                className="btn-secondary w-full justify-center gap-2 mt-4"
+              >
+                <Send size={14} /> I&apos;ve made this transfer
+              </button>
+            ) : isPaymentStuck ? (
+              <div className="mt-4 border border-amber-200 bg-amber-50/60 rounded-xl p-4 text-center">
+                <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-2.5">
+                  <AlertCircle size={18} className="text-amber-600" />
+                </div>
+                <p className="text-sm font-semibold text-slate-900">Still waiting on confirmation</p>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed max-w-xs mx-auto">
+                  It's been a little while since you told us you sent the transfer and we haven't
+                  confirmed it yet. We're still checking automatically — if you have a bank receipt
+                  or reference number, reach out and we'll trace it directly.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center mt-3.5">
+                  <a
+                    href={`${SUPPORT_CONTACT_URL}?subject=${encodeURIComponent(
+                      `Payment not confirmed — project ${project.id}`
+                    )}`}
+                    className="btn-primary btn-sm gap-2 justify-center"
+                  >
+                    <LifeBuoy size={13} /> Contact support
+                  </a>
+                  <button
+                    onClick={handleCheckPaymentNow}
+                    className="btn-ghost btn-sm gap-2 justify-center"
+                  >
+                    <RefreshCw size={12} /> Check again
+                  </button>
+                </div>
+                <p className="text-2xs text-slate-400 mt-3">
+                  Reference: <span className="font-mono">{project.id}</span> — share this with support
+                </p>
+              </div>
+            ) : (
+              <div className="mt-4 flex items-center justify-center gap-2 text-xs text-forest-700 bg-forest-50 border border-forest-200 rounded-xl px-3 py-2.5">
+                <RefreshCw size={13} className="animate-spin flex-shrink-0" />
+                <span>Checking for your payment — this usually confirms within a minute.</span>
+              </div>
+            )}
+          </div>
+        ) : isStuck ? (
+          <div className="card p-6 mb-5 text-center border-amber-200">
+            <div className="w-11 h-11 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <AlertCircle size={22} className="text-amber-600" />
+            </div>
+            <p className="text-sm font-semibold text-slate-900">This is taking longer than expected</p>
+            <p className="text-xs text-slate-500 mt-1.5 leading-relaxed max-w-xs mx-auto">
+              We're still trying to set up your payment account. This is unusual — you don't need to
+              keep waiting here. We'll keep checking automatically, but if it's still not ready soon,
+              reach out and we'll sort it out directly.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center mt-4">
+              <a
+                href={`${SUPPORT_CONTACT_URL}?subject=${encodeURIComponent(
+                  `Payment account not ready — project ${project.id}`
+                )}`}
+                className="btn-primary btn-sm gap-2 justify-center"
+              >
+                <LifeBuoy size={13} /> Contact support
+              </a>
+              <button
+                onClick={() => {
+                  toast.loading("Checking again…", { id: "virtual-account-retry" });
+                  loadProject().finally(() => toast.dismiss("virtual-account-retry"));
+                }}
+                className="btn-ghost btn-sm gap-2 justify-center"
+              >
+                <RefreshCw size={12} /> Check again
+              </button>
+            </div>
+            <p className="text-2xs text-slate-400 mt-3">
+              Reference: <span className="font-mono">{project.id}</span> — share this with support
+            </p>
           </div>
         ) : (
           <div className="card p-6 mb-5 text-center">
             <div className="w-8 h-8 border-2 border-forest-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-sm text-slate-600">Provisioning your virtual account…</p>
+            <p className="text-sm text-slate-600">Preparing your virtual account…</p>
             <p className="text-xs text-slate-400 mt-1">This usually takes a few seconds.</p>
             <button
               onClick={() => {
-                setProvisioning(true);
                 toast.loading("Retrying virtual account setup…", { id: "virtual-account-retry" });
-                loadProject().finally(() => {
-                  toast.dismiss("virtual-account-retry");
-                });
+                loadProject().finally(() => toast.dismiss("virtual-account-retry"));
               }}
               className="btn-ghost btn-sm mt-4 gap-2"
             >
@@ -291,7 +446,11 @@ export default function PaymentInstructionsPage() {
           ) : (
             <Clock size={13} />
           )}
-          <span>Checking for payment confirmation automatically…</span>
+          <span>
+            {paymentReported
+              ? "Checking every few seconds since you reported your transfer…"
+              : "Checking for payment confirmation automatically…"}
+          </span>
         </div>
 
         <div className="mt-6 text-center">

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { registerSchema, type RegisterFormData } from "@/schemas";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
+import { getSafeNextPath } from "@/lib/utils";
 import type { AuthResponse, ApiSuccessResponse } from "@/types";
 import { cn } from "@/lib/utils";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -21,6 +22,8 @@ function RegisterForm() {
   const { setAuth } = useAuthStore();
   const [showPw, setShowPw] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const next = getSafeNextPath(params.get("next"));
 
   const {
     register,
@@ -50,7 +53,9 @@ function RegisterForm() {
       const { token, user } = response.data;
       setAuth(user, token);
       toast.success("Account created! Please verify your email.");
-      router.push("/verify-email");
+      // Carry the project link (if any) forward into email verification,
+      // so it isn't lost between registration and the client's dashboard.
+      router.push(next ? `/verify-email?next=${encodeURIComponent(next)}` : "/verify-email");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Could not create account. Please try again.";
       toast.error(msg);
@@ -181,7 +186,12 @@ function RegisterForm() {
 
           <p className="text-center text-sm text-slate-500 mt-5">
             Already have an account?{" "}
-            <Link href="/login" className="text-forest-700 font-semibold hover:underline">Sign in</Link>
+            <Link
+              href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"}
+              className="text-forest-700 font-semibold hover:underline"
+            >
+              Sign in
+            </Link>
           </p>
         </div>
       </div>

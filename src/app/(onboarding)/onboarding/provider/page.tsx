@@ -17,7 +17,7 @@ import {
 } from "@/schemas";
 import { onboardingApi, uploadApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
-import { NIGERIAN_STATES, CATEGORY_LABELS, CATEGORY_ICONS, cn } from "@/lib/utils";
+import { NIGERIAN_STATES, CATEGORY_LABELS, CATEGORY_ICONS, cn, getSafeNextPath, consumePendingNext } from "@/lib/utils";
 import type { ServiceCategory } from "@/types";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -46,7 +46,13 @@ export default function ProviderOnboardingPage() {
       });
       updateUser({ onboardingComplete: true });
       toast.success("Account activated! Welcome to MilePay.");
-      router.push("/dashboard");
+
+      const queryNext = typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("next")
+        : null;
+      const next = getSafeNextPath(queryNext) ?? consumePendingNext();
+
+      router.push(next || "/dashboard");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Could not activate account");
     }
@@ -217,7 +223,7 @@ function Step1({
           {...register("bio")}
           className="field-textarea"
           rows={4}
-          placeholder="Describe your experience, skills, and what clients can expect from working with you… (min 80 characters)"
+          placeholder="Describe your experience, skills, and what clients can expect from working with you… (min 10 characters)"
         />
         {errors.bio && <p className="field-error">{errors.bio.message}</p>}
       </div>
@@ -326,7 +332,7 @@ function Step2({
       );
     }
   }
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div>

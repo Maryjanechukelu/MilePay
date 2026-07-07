@@ -20,6 +20,38 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function getSafeNextPath(next: string | null | undefined): string | null {
+  if (!next) return null;
+  try {
+    const decoded = decodeURIComponent(next);
+    if (!decoded.startsWith("/") || decoded.startsWith("//")) return null;
+    return decoded;
+  } catch {
+    return null;
+  }
+}
+
+const PENDING_NEXT_KEY = "mp_pending_next";
+
+export function storePendingNext(path: string | null) {
+  if (typeof window === "undefined" || !path) return;
+  localStorage.setItem(PENDING_NEXT_KEY, path);
+}
+
+/** Read without clearing — use when another step still needs it after this one. */
+export function peekPendingNext(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(PENDING_NEXT_KEY);
+}
+
+/** Read and clear — use at the final destination, once redirect is complete. */
+export function consumePendingNext(): string | null {
+  if (typeof window === "undefined") return null;
+  const value = localStorage.getItem(PENDING_NEXT_KEY);
+  if (value) localStorage.removeItem(PENDING_NEXT_KEY);
+  return value;
+}
+
 // ─── Currency formatting ─────────────────────────────────────────
 export function formatNaira(
   amount: number | string | null | undefined,

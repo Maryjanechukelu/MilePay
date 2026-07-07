@@ -39,6 +39,7 @@ export default function CreateProjectPage() {
         ...data,
         totalAmount,
         milestones: data.milestones.map((m) => ({ ...m, amount: Number(m.amount) })),
+        currency: ""
       });
       const project = res.data.data;
       setProjectId(project.id);
@@ -157,7 +158,7 @@ export default function CreateProjectPage() {
 
                   <div>
                     <label className="field-label">
-                      Client email <span className="text-slate-400 font-normal">(optional — to send them an invitation)</span>
+                      Client email <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
@@ -166,7 +167,7 @@ export default function CreateProjectPage() {
                       placeholder="client@example.com"
                     />
                     {errors.clientEmail && <p className="field-error">{errors.clientEmail.message}</p>}
-                    <p className="field-hint">Leave blank to share the link manually via WhatsApp or any channel.</p>
+                    {/* <p className="field-hint">Leave blank to share the link manually via WhatsApp or any channel.</p> */}
                   </div>
                 </div>
               </div>
@@ -250,7 +251,7 @@ export default function CreateProjectPage() {
                               {...register(`milestones.${i}.amount`, { valueAsNumber: true })}
                               className="field-input pl-7 text-sm"
                               placeholder="50000"
-                              min={1000}
+                              min={100}
                             />
                           </div>
                           {errors.milestones?.[i]?.amount && (

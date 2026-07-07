@@ -146,14 +146,32 @@ export const onboardingApi = {
 
 // ─── Project endpoints ────────────────────────────────────────────
 function mapProject(raw: any): Project {
+  const hasVirtualAccount = !!raw.virtual_account_number;
+  const totalAmount = Number(raw.total_amount ?? raw.totalAmount ?? 0);
+  const amountPaid = Number(raw.amount_paid ?? raw.amountPaid ?? 0);
+
   return {
     ...raw,
-    totalAmount: Number(raw.total_amount ?? raw.totalAmount ?? 0),
-    amountPaid: Number(raw.amount_paid ?? raw.amountPaid ?? 0),
+    totalAmount,
+    amountPaid,
     createdAt: raw.created_at ?? raw.createdAt,
     updatedAt: raw.updated_at ?? raw.updatedAt,
     clientEmail: raw.client_email ?? raw.clientEmail,
     shareUrl: raw.share_url ?? raw.shareUrl,
+    virtualAccount: hasVirtualAccount
+      ? {
+        id: raw.virtual_account_id,
+        bankName: raw.virtual_account_bank,
+        accountNumber: raw.virtual_account_number,
+        accountName: raw.virtual_account_name,
+        nombaRef: raw.nomba_account_ref,
+        expectedAmount: totalAmount,
+        paidAmount: amountPaid,
+        underpayment: Math.max(0, totalAmount - amountPaid),
+        balance: amountPaid,
+        overpayment: Number(raw.overpayment_amount ?? 0),
+      }
+      : undefined,
     milestones: (raw.milestones ?? []).map((m: any) => ({
       ...m,
       amount: Number(m.amount ?? 0),
@@ -164,6 +182,7 @@ function mapProject(raw: any): Project {
 export const projectApi = {
   create: (data: {
     title: string; description: string; clientEmail?: string;
+    currency: string;
     totalAmount: number;
     milestones: { title: string; description: string; deliverable: string; amount: number }[];
   }) => api.post("/projects", data),

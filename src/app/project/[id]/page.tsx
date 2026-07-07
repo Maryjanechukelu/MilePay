@@ -12,7 +12,8 @@ import { projectApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import {
   formatNaira, formatDate, copyToClipboard,
-  PROJECT_STATE_CONFIG, CATEGORY_LABELS, cn, getProjectShareUrl
+  PROJECT_STATE_CONFIG, CATEGORY_LABELS, cn, getProjectShareUrl,
+  storePendingNext
 } from "@/lib/utils";
 import type { Project } from "@/types";
 
@@ -34,9 +35,10 @@ export default function ProjectPreviewPage() {
 
   async function handleAccept() {
     if (!isAuthenticated) {
-      const nextPath = project?.state === "PENDING_ACCEPTANCE"
+      const nextPath = project?.state === "PENDING_ACCEPTANCE" || project?.state === "DRAFT"
         ? `/project/${params.id}`
         : `/project/${params.id}/pay`;
+        storePendingNext(nextPath);
       router.push(`/register?role=client&next=${nextPath}`);
       return;
     }
@@ -49,7 +51,9 @@ export default function ProjectPreviewPage() {
       router.push(`/project/${params.id}/pay`);
       return;
     }
-    if (project?.state !== "PENDING_ACCEPTANCE") {
+    // Accept from either DRAFT or PENDING_ACCEPTANCE — whichever your backend
+    // actually uses as the "not yet accepted" state before payment.
+    if (project?.state !== "PENDING_ACCEPTANCE" && project?.state !== "DRAFT") {
       toast.error("This project cannot be accepted right now.");
       return;
     }
@@ -70,7 +74,7 @@ export default function ProjectPreviewPage() {
 
   const stateCfg = PROJECT_STATE_CONFIG[project.state];
   const isOwner = isAuthenticated && user?.id === project.providerId;
-  const alreadyFunded = ["ACTIVE","COMPLETED","DISPUTED"].includes(project.state);
+  const alreadyFunded = ["ACTIVE", "COMPLETED", "DISPUTED"].includes(project.state);
   const awaitingPayment = ["PENDING_PAYMENT", "PARTIALLY_PAID"].includes(project.state);
 
   return (
@@ -206,9 +210,9 @@ export default function ProjectPreviewPage() {
               </h3>
               <div className="space-y-2.5">
                 {[
-                  { icon: Lock,       text: "Your payment is locked in a dedicated bank account — not sent to the provider." },
-                  { icon: CheckCircle,text: "Payment releases only when you approve each milestone." },
-                  { icon: Clock,      text: "If you don't respond in 72 hours, milestones auto-approve to protect the provider." },
+                  { icon: Lock, text: "Your payment is locked in a dedicated bank account — not sent to the provider." },
+                  { icon: CheckCircle, text: "Payment releases only when you approve each milestone." },
+                  { icon: Clock, text: "If you don't respond in 72 hours, milestones auto-approve to protect the provider." },
                   { icon: AlertTriangle, text: "Raise a dispute any time — funds are frozen until our team reviews." },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="flex gap-2.5">
@@ -236,8 +240,8 @@ export default function ProjectPreviewPage() {
                 <div className="space-y-2">
                   {[
                     { icon: Building2, text: "You get a unique bank account number" },
-                    { icon: Banknote,  text: "Transfer from any Nigerian bank" },
-                    { icon: Lock,      text: "Funds locked until each milestone is approved" },
+                    { icon: Banknote, text: "Transfer from any Nigerian bank" },
+                    { icon: Lock, text: "Funds locked until each milestone is approved" },
                     { icon: CheckCircle, text: "Free for clients — no hidden fees" },
                   ].map(({ icon: Icon, text }) => (
                     <div key={text} className="flex items-center gap-2">
@@ -304,7 +308,7 @@ export default function ProjectPreviewPage() {
                   ) : awaitingPayment ? (
                     <><ArrowRight size={15} /> Continue to payment</>
                   ) : (
-                    <><Shield size={15} /> Accept & fund project — {formatNaira(project.totalAmount)}</>
+                    <>Accept & fund project</>
                   )}
                 </button>
               )}

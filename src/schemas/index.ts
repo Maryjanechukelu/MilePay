@@ -58,7 +58,7 @@ export const providerStep1Schema = z.object({
     .min(1, "Select at least one service category"),
   bio: z
     .string()
-    .min(80, "Bio must be at least 80 characters")
+    .min(10, "Bio must be at least 10 characters")
     .max(500, "Bio must be under 500 characters"),
   portfolioUrl: z
     .string()
@@ -105,7 +105,7 @@ export const milestoneSchema = z.object({
     .min(10, "What is the specific deliverable? (min 10 chars)"),
   amount: z
     .number({ invalid_type_error: "Enter a valid amount" })
-    .min(1000, "Minimum milestone amount is ₦1,000")
+    .min(100, "Minimum milestone amount is ₦100")
     .max(10_000_000, "Maximum milestone amount is ₦10,000,000"),
 });
 
@@ -120,9 +120,7 @@ export const createProjectSchema = z.object({
     .max(2000),
   clientEmail: z
     .string()
-    .email("Enter a valid client email")
-    .optional()
-    .or(z.literal("")),
+    .email("Enter a valid client email"),
   milestones: z
     .array(milestoneSchema)
     .min(1, "Add at least one milestone")

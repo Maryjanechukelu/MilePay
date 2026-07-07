@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { LoginSquare01Icon } from "@hugeicons/core-free-icons";
@@ -12,18 +12,29 @@ import { toast } from "sonner";
 import { loginSchema, type LoginFormData } from "@/schemas";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
+import { getSafeNextPath } from "@/lib/utils";
 import type { AuthResponse, ApiSuccessResponse, User } from "@/types";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setAuth } = useAuthStore();
   const [showPw, setShowPw] = useState(false);
+
+  const next = getSafeNextPath(searchParams.get("next"));
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
+
+  // Appends ?next=... onto an intermediate step (verify-email, onboarding)
+  // so the destination link survives every gate between here and the
+  // client's dashboard, not just the first hop.
+  function withNext(path: string) {
+    return next ? `${path}?next=${encodeURIComponent(next)}` : path;
+  }
 
   async function onSubmit(data: LoginFormData) {
     try {
@@ -40,7 +51,7 @@ export default function LoginPage() {
       setAuth(user, token);
 
       if (!user.emailVerified) {
-        router.push("/verify-email");
+        router.push(withNext("/verify-email"));
         return;
       }
 
@@ -50,11 +61,16 @@ export default function LoginPage() {
       }
 
       if (!user.onboardingComplete) {
-        router.push(`/onboarding/${user.role}`);
+        router.push(withNext(`/onboarding/${user.role}`));
         return;
       }
 
-      router.push("/dashboard");
+      // If we were sent here to accept/pay a project link, go straight
+      // back to it. Otherwise fall back to the correct dashboard for the
+      // user's role — previously this always sent everyone to /dashboard
+      // (the provider dashboard route), so a client logging in directly
+      // would never land on /client-dashboard.
+      router.push(next ?? (user.role === "client" ? "/client-dashboard" : "/dashboard"));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Invalid email or password";
       toast.error(msg);
@@ -134,42 +150,23 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-slate-500 mt-6">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-forest-700 font-semibold hover:underline">
+            <Link
+              href={next ? `/register?role=client&next=${encodeURIComponent(next)}` : "/register"}
+              className="text-forest-700 font-semibold hover:underline"
+            >
               Create one free
             </Link>
           </p>
-
-          {/* Demo access */}
-          {/* <div className="border-t border-slate-100 mt-6 pt-5">
-            <p className="text-xs text-slate-400 text-center mb-3">Demo accounts</p>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { label: "Provider", email: "provider@demo.ng", pw: "Demo1234" },
-                { label: "Client", email: "client@demo.ng", pw: "Demo1234" },
-                { label: "Admin", email: "admin@demo.ng", pw: "Demo1234" },
-              ].map((d) => (
-                <button
-                  key={d.label}
-                  type="button"
-                  onClick={async () => {
-                    try {
-                      const res = await authApi.login({ email: d.email, password: d.pw });
-                      const { token, user } = res.data as AuthResponse;
-                      setAuth(user, token);
-                      router.push("/dashboard");
-                    } catch {
-                      toast.error("Demo login failed — check API connection");
-                    }
-                  }}
-                  className="text-xs border border-slate-200 rounded-lg py-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors cursor-pointer"
-                >
-                  {d.label}
-                </button>
-              ))}
-            </div>
-          </div> */}
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

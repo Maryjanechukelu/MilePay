@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Mail, CheckCircle, RefreshCw } from "lucide-react";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
+import { getSafeNextPath, peekPendingNext } from "@/lib/utils";
 
 function VerifyEmailContent() {
   const params   = useSearchParams();
@@ -16,6 +17,13 @@ function VerifyEmailContent() {
   const [verified, setVerified]   = useState(false);
   const token = params.get("token");
 
+  // `next` may be in the URL (same-tab flow) or only in localStorage (the
+  // user clicked the verification link from their email client, where the
+  // link had no knowledge of `next`). Check the URL first, fall back to
+  // what was persisted when they first hit "Accept & fund". Use peek, not
+  // consume — onboarding still needs this value after we redirect there.
+  const next = getSafeNextPath(params.get("next")) ?? peekPendingNext();
+
   // Auto-verify if token present in URL
   useState(() => {
     if (token) {
@@ -24,7 +32,10 @@ function VerifyEmailContent() {
           updateUser({ emailVerified: true });
           setVerified(true);
           toast.success("Email verified!");
-          setTimeout(() => router.push(`/onboarding/${user?.role ?? "provider"}`), 1500);
+          const onboardingPath = `/onboarding/${user?.role ?? "provider"}`;
+          setTimeout(() => {
+            router.push(next ? `${onboardingPath}?next=${encodeURIComponent(next)}` : onboardingPath);
+          }, 1500);
         })
         .catch(() => toast.error("Verification link is invalid or expired"));
     }
