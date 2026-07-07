@@ -109,7 +109,7 @@ export function useProviderProjects(params: {
   export function useCreateProject() {
     const queryClient = useQueryClient();
     return useMutation({
-      mutationFn: async (input: CreateProjectInput & { totalAmount: number }) => {
+      mutationFn: async (input: CreateProjectInput & { totalAmount: number; currency: string }) => {
         const res = await projectApi.create(input);
         return res.data.data as Project;
       },
