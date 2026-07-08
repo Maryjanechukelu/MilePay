@@ -15,11 +15,18 @@ import { useAuthStore } from "@/store/authStore";
 import { getSafeNextPath } from "@/lib/utils";
 import type { AuthResponse, ApiSuccessResponse, User } from "@/types";
 
+const DEMO_ACCOUNTS = [
+  { label: "Provider", email: "provider@milepay.ng", pw: "Demo@12345" },
+  { label: "Client",   email: "client@milepay.ng",   pw: "Demo@12345" },
+  { label: "Admin",    email: "admin@milepay.com", pw: "Admin@123456" },
+];
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setAuth } = useAuthStore();
   const [showPw, setShowPw] = useState(false);
+  const [demoLoading, setDemoLoading] = useState<string | null>(null);
 
   const next = getSafeNextPath(searchParams.get("next"));
 
@@ -29,11 +36,32 @@ function LoginForm() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
-  // Appends ?next=... onto an intermediate step (verify-email, onboarding)
-  // so the destination link survives every gate between here and the
-  // client's dashboard, not just the first hop.
   function withNext(path: string) {
     return next ? `${path}?next=${encodeURIComponent(next)}` : path;
+  }
+
+  function completeLogin(rawUser: any, token: string) {
+    const user: User = {
+      ...rawUser,
+      emailVerified: rawUser.email_verified,
+      onboardingComplete: rawUser.onboarding_complete,
+    };
+
+    setAuth(user, token);
+
+    if (!user.emailVerified) {
+      router.push(withNext("/verify-email"));
+      return;
+    }
+    if (user.role === "admin") {
+      router.push("/admin");
+      return;
+    }
+    if (!user.onboardingComplete) {
+      router.push(withNext(`/onboarding/${user.role}`));
+      return;
+    }
+    router.push(next ?? (user.role === "client" ? "/client-dashboard" : "/dashboard"));
   }
 
   async function onSubmit(data: LoginFormData) {
@@ -41,39 +69,24 @@ function LoginForm() {
       const res = await authApi.login(data);
       const response = res.data as ApiSuccessResponse<AuthResponse>;
       const { token, user: rawUser } = res.data.data;
-
-      const user: User = {
-        ...rawUser,
-        emailVerified: rawUser.email_verified,
-        onboardingComplete: rawUser.onboarding_complete,
-      };
-
-      setAuth(user, token);
-
-      if (!user.emailVerified) {
-        router.push(withNext("/verify-email"));
-        return;
-      }
-
-      if (user.role === "admin") {
-        router.push("/admin");
-        return;
-      }
-
-      if (!user.onboardingComplete) {
-        router.push(withNext(`/onboarding/${user.role}`));
-        return;
-      }
-
-      // If we were sent here to accept/pay a project link, go straight
-      // back to it. Otherwise fall back to the correct dashboard for the
-      // user's role — previously this always sent everyone to /dashboard
-      // (the provider dashboard route), so a client logging in directly
-      // would never land on /client-dashboard.
-      router.push(next ?? (user.role === "client" ? "/client-dashboard" : "/dashboard"));
+      completeLogin(rawUser, token);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Invalid email or password";
       toast.error(msg);
+    }
+  }
+
+  async function handleDemoLogin(d: typeof DEMO_ACCOUNTS[number]) {
+    setDemoLoading(d.label);
+    try {
+      const res = await authApi.login({ email: d.email, password: d.pw });
+      const { token, user: rawUser } = res.data.data; // was res.data — missing one level
+      completeLogin(rawUser, token);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Login failed";
+      toast.error(`${d.label} demo account: ${msg}`);
+    } finally {
+      setDemoLoading(null);
     }
   }
 
@@ -157,6 +170,28 @@ function LoginForm() {
               Create one free
             </Link>
           </p>
+
+          {/* Demo access */}
+          <div className="border-t border-slate-100 mt-6 pt-5">
+            <p className="text-xs text-slate-400 text-center mb-3">Demo accounts</p>
+            <div className="grid grid-cols-3 gap-2">
+              {DEMO_ACCOUNTS.map((d) => (
+                <button
+                  key={d.label}
+                  type="button"
+                  disabled={demoLoading !== null}
+                  onClick={() => handleDemoLogin(d)}
+                  className="text-xs border border-slate-200 rounded-lg py-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors disabled:opacity-40"
+                >
+                  {demoLoading === d.label ? (
+                    <span className="w-3 h-3 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin inline-block" />
+                  ) : (
+                    d.label
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
