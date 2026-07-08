@@ -79,9 +79,23 @@ export default function ProviderDashboardPage() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <button className="btn-icon btn-ghost relative">
+            <Link href="/notifications" className="btn-icon btn-ghost relative">
               <HugeiconsIcon icon={Notification01Icon} size={18} />
-            </button>
+
+              {(data?.unreadNotifications ?? 0) > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1
+                 flex items-center justify-center
+                 rounded-full bg-red-500 text-white
+                 text-[10px] font-bold leading-none
+                 ring-2 ring-white"
+                >
+                  {data!.unreadNotifications > 99
+                    ? "99+"
+                    : data!.unreadNotifications}
+                </span>
+              )}
+            </Link>
             <Link href="/settings" className="btn-icon btn-ghost hidden sm:flex"><Settings size={18} /></Link>
             <div className="w-8 h-8 bg-forest-800 rounded-full flex items-center justify-center text-xs font-bold text-white">
               {getInitials(displayName)}

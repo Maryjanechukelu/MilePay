@@ -268,36 +268,16 @@ export const milestoneApi = {
 // dashboard pages keep working without needing new backend endpoints.
 export const dashboardApi = {
   provider: async () => {
-    const { projects } = await projectApi.list({ role: "provider", limit: 100 });
-    // const projects = ((res.data?.data?.projects ?? []) as any[]).map((p) => ({
-    //   ...p,
-    //   totalAmount: Number(p.total_amount ?? 0),
-    //   createdAt: p.created_at,
-    //   updatedAt: p.updated_at,
-    //   milestones: p.milestones ?? [],
-    // })) as Project[];
+    const [statsRes, listRes] = await Promise.all([
+      api.get("/dashboard/provider"),
+      projectApi.list({ role: "provider", limit: 100 }),
+    ]);
+    // Defensive: handle either {success,data:{...}} or a bare body —
+    // unconfirmed which this endpoint actually uses.
+    const body = statsRes.data?.data ?? statsRes.data;
+    const { projects } = listRes;
 
-    const activeProjects = projects.filter((p) => p.state === "ACTIVE").length;
-    const completedProjects = projects.filter((p) => p.state === "COMPLETED").length;
-
-    const totalEarned = projects
-      .flatMap((p) => p.milestones ?? [])
-      .filter((m) => m.state === "PAID")
-      .reduce((sum, m) => sum + m.amount, 0);
-
-    const pendingAmount = projects
-      .flatMap((p) => p.milestones ?? [])
-      .filter((m) => m.state === "APPROVED" || m.state === "APPROVED_PENDING_TRANSFER")
-      .reduce((sum, m) => sum + m.amount, 0);
-
-    const completionRates = projects.length
-      ? Math.round((completedProjects / projects.length) * 100)
-      : 0;
-
-    // Synthesize a "recent payments" list from paid milestones across
-    // all projects, most recent first — there's no dedicated payments
-    // endpoint for this, so it's derived from milestone data already
-    // present on each project.
+    // No dedicated payments endpoint yet — still derived from milestones.
     const recentPayments = projects
       .flatMap((p) =>
         (p.milestones ?? [])
@@ -321,53 +301,54 @@ export const dashboardApi = {
     const dashboard: ProviderDashboard = {
       stats: {
         totalProjects: projects.length,
-        activeProjects,
-        completedProjects,
-        totalEarned,
-        pendingAmount,
-        avgCompletionRate: completionRates,
+        activeProjects: body.stats.activeProjects,
+        completedProjects: body.stats.completedProjects,
+        totalEarned: body.stats.totalEarned,
+        pendingAmount: body.stats.pendingPayout,
+        avgCompletionRate: projects.length
+          ? Math.round((body.stats.completedProjects / projects.length) * 100)
+          : 0,
+        trustScore: body.stats.trustScore,
+        isVerified: body.stats.isVerified,
       },
       projects,
       recentPayments,
+      unreadNotifications: body.unreadNotifications ?? 0,
     };
 
     return { data: { data: dashboard } };
   },
 
   client: async () => {
-    const { projects } = await projectApi.list({ role: "client", limit: 100 });
-    // const projects = ((res.data?.data?.projects ?? []) as any[]).map((p) => ({
-    //   ...p,
-    //   totalAmount: Number(p.total_amount ?? 0),
-    //   createdAt: p.created_at,
-    //   updatedAt: p.updated_at,
-    //   milestones: p.milestones ?? [],
-    // })) as Project[];
-
-    const activeProjects = projects.filter((p) => p.state === "ACTIVE").length;
-    const completedProjects = projects.filter((p) => p.state === "COMPLETED").length;
-
-    const totalSpent = projects
-      .flatMap((p) => p.milestones ?? [])
-      .filter((m) => m.state === "PAID")
-      .reduce((sum, m) => sum + m.amount, 0);
-
-    const pendingApprovals = projects
-      .flatMap((p) => p.milestones ?? [])
-      .filter((m) => m.state === "SUBMITTED").length;
+    const [statsRes, listRes] = await Promise.all([
+      api.get("/dashboard/client"),
+      projectApi.list({ role: "client", limit: 100 }),
+    ]);
+    const body = statsRes.data?.data ?? statsRes.data;
+    const { projects } = listRes;
 
     const dashboard: ClientDashboard = {
       stats: {
         totalProjects: projects.length,
-        activeProjects,
-        completedProjects,
-        totalSpent,
-        pendingApprovals,
+        activeProjects: body.stats.activeProjects,
+        completedProjects: body.stats.completedProjects,
+        totalSpent: body.stats.totalSpent,
+        pendingApprovals: body.stats.pendingApprovals,
       },
       projects,
+      unreadNotifications: body.unreadNotifications ?? 0,
     };
 
     return { data: { data: dashboard } };
+  },
+
+  admin: async () => {
+    const res = await api.get("/dashboard/admin");
+    const body = res.data?.data ?? res.data;
+    // Shape: { stats: { totalUsers, totalProviders, totalClients,
+    // activeProjects, completedProjects, openDisputes, unmatchedPayments,
+    // totalVolume, platformRevenue } } — no unreadNotifications on this one.
+    return { data: { data: body } };
   },
 };
 

@@ -12,15 +12,15 @@ import { relativeTime, formatDateTime, cn } from "@/lib/utils";
 import type { Notification } from "@/types";
 
 const TYPE_CONFIG: Record<Notification["type"], { icon: typeof Bell; color: string; bg: string; label: string }> = {
-  project_funded:      { icon: Banknote,      color: "text-forest-600",  bg: "bg-forest-50",  label: "Funding" },
-  milestone_submitted: { icon: Package,       color: "text-blue-600",    bg: "bg-blue-50",    label: "Milestone" },
-  milestone_approved:  { icon: CheckCircle,   color: "text-forest-600",  bg: "bg-forest-50",  label: "Milestone" },
-  milestone_paid:      { icon: Banknote,      color: "text-amber-600",   bg: "bg-amber-50",   label: "Payout" },
-  revision_requested:  { icon: Clock,         color: "text-amber-600",   bg: "bg-amber-50",   label: "Revision" },
-  dispute_raised:      { icon: AlertTriangle, color: "text-red-600",     bg: "bg-red-50",     label: "Dispute" },
-  dispute_resolved:    { icon: CheckCircle,   color: "text-forest-600",  bg: "bg-forest-50",  label: "Dispute" },
-  payment_received:    { icon: Banknote,      color: "text-forest-600",  bg: "bg-forest-50",  label: "Payment" },
-  auto_approved:       { icon: Clock,         color: "text-slate-600",   bg: "bg-slate-50",   label: "Auto-approval" },
+  project_funded: { icon: Banknote, color: "text-forest-600", bg: "bg-forest-50", label: "Funding" },
+  milestone_submitted: { icon: Package, color: "text-blue-600", bg: "bg-blue-50", label: "Milestone" },
+  milestone_approved: { icon: CheckCircle, color: "text-forest-600", bg: "bg-forest-50", label: "Milestone" },
+  milestone_paid: { icon: Banknote, color: "text-amber-600", bg: "bg-amber-50", label: "Payout" },
+  revision_requested: { icon: Clock, color: "text-amber-600", bg: "bg-amber-50", label: "Revision" },
+  dispute_raised: { icon: AlertTriangle, color: "text-red-600", bg: "bg-red-50", label: "Dispute" },
+  dispute_resolved: { icon: CheckCircle, color: "text-forest-600", bg: "bg-forest-50", label: "Dispute" },
+  payment_received: { icon: Banknote, color: "text-forest-600", bg: "bg-forest-50", label: "Payment" },
+  auto_approved: { icon: Clock, color: "text-slate-600", bg: "bg-slate-50", label: "Auto-approval" },
 };
 
 type FilterType = "all" | "unread";
@@ -34,8 +34,8 @@ export default function NotificationsPage() {
 
   const dashboardHref =
     user?.role === "provider" ? "/dashboard" :
-    user?.role === "client"   ? "/client-dashboard" :
-    user?.role === "admin"    ? "/admin" : "/";
+      user?.role === "client" ? "/client-dashboard" :
+        user?.role === "admin" ? "/admin" : "/";
 
   async function loadNotifications() {
     setLoading(true);
@@ -43,7 +43,14 @@ export default function NotificationsPage() {
       const res = await notificationApi.list(
         filter === "unread" ? { unread: true } : undefined
       );
-      setNotifications(res.data.data ?? []);
+
+      const raw = res.data.data;
+
+      setNotifications(
+        Array.isArray(raw)
+          ? raw
+          : raw?.notifications ?? []
+      );
     } catch {
       toast.error("Could not load notifications");
     } finally {
@@ -103,7 +110,7 @@ export default function NotificationsPage() {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1">
             {([
-              { id: "all" as const,    label: "All" },
+              { id: "all" as const, label: "All" },
               { id: "unread" as const, label: "Unread" },
             ]).map((f) => (
               <button

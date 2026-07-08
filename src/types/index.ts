@@ -254,10 +254,13 @@ export interface ProviderDashboard {
     completedProjects: number;
     totalEarned: number;
     pendingAmount: number;
+    trustScore: number;
     avgCompletionRate: number;
+    isVerified: string;
   };
   projects: Project[];
   recentPayments: Payment[];
+  unreadNotifications: number;
 }
 
 export interface ClientDashboard {
@@ -269,6 +272,7 @@ export interface ClientDashboard {
     pendingApprovals: number;
   };
   projects: Project[];
+  unreadNotifications: number;
 }
 
 export interface AdminDashboard {

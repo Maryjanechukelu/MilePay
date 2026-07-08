@@ -58,7 +58,7 @@ export default function ClientDashboardPage() {
               </button>
             </div>
             <Link href="/client-dashboard" className="hidden sm:flex items-center gap-2">
-                <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
+              <div className="w-full h-12 bg-forest-900 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-forest-800 transition-colors">
                 <Image src="/bg-colored.png" alt="MilePay" width={120} height={50} loading="eager" style={{ width: "auto", height: "auto" }} />
               </div>
             </Link>
@@ -76,7 +76,23 @@ export default function ClientDashboardPage() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <button className="btn-icon btn-ghost"><HugeiconsIcon icon={Notification01Icon} size={18} /></button>
+            <Link href="/notifications" className="btn-icon btn-ghost relative">
+              <HugeiconsIcon icon={Notification01Icon} size={18} />
+
+              {(data?.unreadNotifications ?? 0) > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1
+                 flex items-center justify-center
+                 rounded-full bg-red-500 text-white
+                 text-[10px] font-bold leading-none
+                 ring-2 ring-white"
+                >
+                  {data!.unreadNotifications > 99
+                    ? "99+"
+                    : data!.unreadNotifications}
+                </span>
+              )}
+            </Link>
             <Link href="/settings" className="btn-icon btn-ghost hidden sm:flex"><Settings size={18} /></Link>
             <div className="w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
               {getInitials(displayName)}
